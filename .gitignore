@@ -1,0 +1,40 @@
+# Environment & Secrets
+.env
+*.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Databases (Local test databases - do not push to public repo)
+*.db
+*.sqlite3
+data/*.db
+data/traceability.db
+
+# Inspection evidence images (Local heavy files)
+data/inspections/*
+!data/inspections/.gitkeep
+
+# Node & PM2
+node_modules/
+npm-debug.log*
+.pm2/
+
+# Temporary / Scratch files
+scratch/
+.agent/
+.agents/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,2378 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIRA CORE Image AI Inspection - Murata DX12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css?v=20261022_qvs_v28">
+  <style id="murataOfficialLoginStyles">
+    /* ==========================================================================
+       User-Designed Murata Inspection 16:9 Master Login Interface
+       ========================================================================== */
+    .custom-login-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 99999 !important;
+      display: flex;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #080d15 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .custom-login-fullscreen.logged-in,
+    .custom-login-fullscreen.hidden,
+    .custom-login-fullscreen[style*="display: none"] {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transform: scale(1.04) !important;
+    }
+
+    /* 16:9 Ratio Master Canvas containing User's Graphic Mockup */
+    .custom-login-canvas {
+      position: relative !important;
+      width: 100vw !important;
+      height: 56.25vw !important; /* 100 * 9 / 16 */
+      max-height: 100vh !important;
+      max-width: 177.78vh !important; /* 100 * 16 / 9 */
+      aspect-ratio: 16 / 9 !important;
+      background-image: url('/static/images/murata_custom_login_bg.jpg?v=20261020_user') !important;
+      background-size: 100% 100% !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    /* Interactive HTML Sign In Card Overlay positioned precisely over the card area */
+    .user-login-card {
+      position: absolute !important;
+      left: 64.06% !important;
+      top: 33.8% !important;
+      width: 30.47% !important;
+      height: auto !important;
+      min-height: 45.5% !important;
+      background: #141c28 !important;
+      border-radius: 14px !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+      padding: 5% 5.2% !important;
+      box-sizing: border-box !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      z-index: 10 !important;
+    }
+
+    .user-card-header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      margin-bottom: 2px !important;
+    }
+
+    .user-card-title {
+      color: #ffffff !important;
+      font-size: clamp(14px, 1.4vw, 22px) !important;
+      font-weight: 700 !important;
+      margin: 0 !important;
+      letter-spacing: -0.2px !important;
+      line-height: 1.2 !important;
+    }
+
+    .user-skip-btn {
+      background: rgba(255, 255, 255, 0.06) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #94a3b8 !important;
+      font-size: clamp(10px, 0.8vw, 12px) !important;
+      font-weight: 500 !important;
+      padding: 3px 8px !important;
+      border-radius: 6px !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      font-family: 'Kanit', sans-serif !important;
+    }
+
+    .user-skip-btn:hover {
+      background: rgba(230, 0, 18, 0.18) !important;
+      color: #ffffff !important;
+      border-color: #e60012 !important;
+    }
+
+    .user-card-subtitle {
+      color: #94a3b8 !important;
+      font-size: clamp(9px, 0.75vw, 11.5px) !important;
+      font-weight: 400 !important;
+      margin: 3px 0 clamp(8px, 1vw, 16px) 0 !important;
+      line-height: 1.35 !important;
+    }
+
+    /* Form Input Groups */
+    .user-input-group {
+      position: relative !important;
+      margin-bottom: clamp(6px, 0.9vw, 12px) !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    .user-input-icon {
+      position: absolute !important;
+      left: clamp(8px, 0.8vw, 12px) !important;
+      width: clamp(13px, 1vw, 16px) !important;
+      height: clamp(13px, 1vw, 16px) !important;
+      color: #94a3b8 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+    }
+
+    .user-input-icon svg {
+      width: 100% !important;
+      height: 100% !important;
+      fill: currentColor !important;
+    }
+
+    .user-input-field {
+      width: 100% !important;
+      box-sizing: border-box !important;
+      background: #1a2333 !important;
+      border: 1.5px solid #283548 !important;
+      border-radius: 7px !important;
+      color: #f1f5f9 !important;
+      font-size: clamp(11px, 0.85vw, 13.5px) !important;
+      font-family: 'Kanit', sans-serif !important;
+      padding: clamp(6px, 0.65vw, 10px) clamp(8px, 0.8vw, 12px) clamp(6px, 0.65vw, 10px) clamp(28px, 2.3vw, 36px) !important;
+      outline: none !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+    }
+
+    .user-input-field:focus {
+      border-color: #e60012 !important;
+      box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.25) !important;
+      background: #1c2738 !important;
+    }
+
+    .user-input-field::placeholder {
+      color: #64748b !important;
+      opacity: 0.9 !important;
+    }
+
+    .user-pwd-toggle {
+      position: absolute !important;
+      right: clamp(6px, 0.7vw, 10px) !important;
+      background: transparent !important;
+      border: none !important;
+      color: #94a3b8 !important;
+      width: clamp(14px, 1.1vw, 18px) !important;
+      height: clamp(14px, 1.1vw, 18px) !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      transition: color 0.15s !important;
+    }
+
+    .user-pwd-toggle:hover {
+      color: #ffffff !important;
+    }
+
+    .user-pwd-toggle svg {
+      width: 100% !important;
+      height: 100% !important;
+      fill: currentColor !important;
+    }
+
+    /* Submit Login Button */
+    .user-login-submit-btn {
+      width: 100% !important;
+      box-sizing: border-box !important;
+      background: linear-gradient(90deg, #d60525 0%, #e60012 50%, #f41935 100%) !important;
+      border: none !important;
+      border-radius: 7px !important;
+      color: #ffffff !important;
+      font-size: clamp(12px, 0.95vw, 15px) !important;
+      font-weight: 700 !important;
+      font-family: 'Kanit', sans-serif !important;
+      padding: clamp(7px, 0.75vw, 11px) 14px !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      margin-top: clamp(4px, 0.5vw, 8px) !important;
+      box-shadow: 0 4px 16px rgba(214, 5, 37, 0.45) !important;
+      transition: transform 0.15s, box-shadow 0.15s, filter 0.15s !important;
+    }
+
+    .user-login-submit-btn:hover {
+      filter: brightness(1.1) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 6px 20px rgba(214, 5, 37, 0.6) !important;
+    }
+
+    .user-login-submit-btn:active {
+      transform: scale(0.99) !important;
+    }
+
+    .login-arrow-icon {
+      width: clamp(13px, 1vw, 17px) !important;
+      height: clamp(13px, 1vw, 17px) !important;
+      fill: #ffffff !important;
+    }
+
+    /* Footer: Remember Me & Forgot Password */
+    .user-card-footer {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      margin-top: clamp(6px, 0.8vw, 12px) !important;
+      font-size: clamp(9px, 0.75vw, 11.5px) !important;
+    }
+
+    .user-remember-label {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      color: #cbd5e1 !important;
+      cursor: pointer !important;
+      user-select: none !important;
+    }
+
+    .user-remember-label input[type="checkbox"] {
+      accent-color: #e60012 !important;
+      width: clamp(11px, 0.85vw, 14px) !important;
+      height: clamp(11px, 0.85vw, 14px) !important;
+      cursor: pointer !important;
+    }
+
+    .user-forgot-link {
+      color: #ef4444 !important;
+      text-decoration: none !important;
+      font-weight: 500 !important;
+      transition: color 0.15s !important;
+    }
+
+    .user-forgot-link:hover {
+      color: #ff7878 !important;
+      text-decoration: underline !important;
+    }
+
+    .user-feedback-msg {
+      min-height: 16px !important;
+      font-size: clamp(9px, 0.75vw, 11.5px) !important;
+      text-align: center !important;
+      font-weight: 500 !important;
+      margin-top: 4px !important;
+      color: #ef4444 !important;
+    }
+
+    /* Fallback for narrow mobile screens */
+    @media (max-width: 768px) {
+      .custom-login-fullscreen {
+        overflow-y: auto !important;
+        align-items: flex-start !important;
+        padding: 16px !important;
+      }
+      .custom-login-canvas {
+        aspect-ratio: auto !important;
+        height: auto !important;
+        width: 100% !important;
+        max-width: 440px !important;
+        background-image: none !important;
+        box-shadow: none !important;
+      }
+      .user-login-card {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 24px 20px !important;
+      }
+    }
+
+                /* ==========================================================================
+       Minimalist Data Transfer Loading Screen (Murata White & Red Edition)
+       ========================================================================== */
+    .cira-minimal-loader {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+      z-index: 999999 !important;
+      display: none;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 24px !important;
+      box-sizing: border-box !important;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease !important;
+    }
+
+    .loader-bottom-footer {
+      position: absolute !important;
+      bottom: 24px !important;
+      left: 0 !important;
+      right: 0 !important;
+      text-align: center !important;
+      font-size: 11px !important;
+      color: #94a3b8 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 4px !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      pointer-events: none !important;
+    }
+
+    .cira-minimal-loader.active {
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    .cira-minimal-loader.closing {
+      opacity: 0 !important;
+      filter: blur(5px) !important;
+    }
+
+    /* Floating White Card Stage with Soft Shadow & Murata Red Top Line */
+    .loader-visual-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 580px;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 38px 42px 32px 42px;
+      box-sizing: border-box;
+      box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(226, 232, 240, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loader-visual-stage::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, #e60012 0%, #d60525 60%, #ff3b53 100%);
+    }
+
+    /* Scene: Server -> Binary Stream -> Laptop */
+    .data-transfer-scene {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    /* 1. Server Stack (Left) */
+    .minimal-server-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 112px;
+      flex-shrink: 0;
+    }
+
+    .server-unit {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 7px;
+      height: 33px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+      padding: 3px 8px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+
+    .server-face {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .server-dots-left {
+      display: flex;
+      gap: 4px;
+    }
+
+    .server-dots-right {
+      display: flex;
+    }
+
+    .led-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .led-dot.red {
+      background: #e60012;
+    }
+
+    .led-dot.active-pulse {
+      animation: murataLedPulse 0.9s infinite alternate;
+    }
+
+    @keyframes murataLedPulse {
+      0% { opacity: 0.3; transform: scale(0.85); box-shadow: none; }
+      100% { opacity: 1; transform: scale(1.18); box-shadow: 0 0 7px rgba(230, 0, 18, 0.9); }
+    }
+
+    .server-slot {
+      position: absolute;
+      bottom: 2px;
+      left: 8px;
+      right: 18px;
+      height: 4px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 2px;
+    }
+
+    /* 2. Binary Stream Viewport (Center) */
+    .binary-stream-viewport {
+      position: relative;
+      overflow: hidden;
+      width: clamp(160px, 22vw, 240px);
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .binary-stream-track {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(9px, 0.85vw, 11px);
+      line-height: 1.4;
+      color: #475569;
+      letter-spacing: 0.5px;
+      user-select: none;
+      animation: binaryShift 1.2s linear infinite;
+    }
+
+    .binary-line {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      opacity: 0.9;
+    }
+
+    .binary-line .red-bit {
+      color: #e60012;
+      font-weight: 700;
+    }
+
+    @keyframes binaryShift {
+      0% { opacity: 0.75; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(3px); }
+      100% { opacity: 0.75; transform: translateX(0); }
+    }
+
+    .stream-flow-mask {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #ffffff 0%, transparent 10%, transparent 90%, #ffffff 100%);
+      pointer-events: none;
+    }
+
+    /* 3. Minimal Laptop (Right) */
+    .minimal-laptop {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 132px;
+      flex-shrink: 0;
+    }
+
+    .laptop-screen {
+      width: 120px;
+      height: 74px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px 6px 0 0;
+      padding: 5px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .laptop-display-inner {
+      width: 100%;
+      height: 100%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .laptop-display-inner .laptop-spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #e60012;
+      border-top-color: transparent;
+      animation: murataSpin 0.9s linear infinite;
+      box-shadow: 0 0 6px rgba(230, 0, 18, 0.2);
+    }
+
+    .laptop-display-inner .laptop-check {
+      display: none;
+      width: 16px;
+      height: 16px;
+      fill: #10b981;
+      filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.4));
+    }
+
+    @keyframes murataSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .laptop-base {
+      width: 136px;
+      height: 7px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 0 0 5px 5px;
+      position: relative;
+    }
+
+    .laptop-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 2px;
+      background: #cbd5e1;
+      border-radius: 0 0 2px 2px;
+    }
+
+    /* Status & Progress Info */
+    .minimal-loader-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 330px;
+      text-align: center;
+    }
+
+    .minimal-phase-text {
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Kanit', sans-serif;
+      margin-bottom: 12px;
+      letter-spacing: 0.1px;
+      transition: color 0.25s;
+    }
+
+    .minimal-progress-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .minimal-progress-track {
+      flex: 1;
+      height: 5px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .minimal-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #d60525 0%, #e60012 50%, #ff3b53 100%);
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(230, 0, 18, 0.5);
+      transition: width 0.25s ease-out, background 0.3s;
+    }
+
+    .minimal-pct-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e60012;
+      min-width: 38px;
+      text-align: right;
+      transition: color 0.25s;
+    }
+  </style>
+</head>
+<body>
+      <!-- Fullscreen Minimalist Data-Transfer Loading Screen (Murata White & Red Edition) -->
+  <div id="ciraFullscreenLoader" class="cira-minimal-loader" style="display: none;">
+    <div class="loader-visual-stage">
+      <!-- Minimalist Data Transfer Scene (Server -> Stream -> Laptop) -->
+      <div class="data-transfer-scene">
+        
+        <!-- Server Stack (Left) -->
+        <div class="minimal-server-stack">
+          <div class="server-unit">
+            <div class="server-face">
+              <div class="server-dots-left">
+                <span class="led-dot red active-pulse"></span>
+                <span class="led-dot red active-pulse" style="animation-delay: 0.2s;"></span>
+              </div>
+              <div class="server-slot"></div>
+              <div class="server-dots-right">
+                <span class="led-dot red active-pulse"></span>
+              </div>
+            </div>
+          </div>
+          <div class="server-unit">
+            <div class="server-face">
+              <div class="server-dots-left">
+                <span class="led-dot red active-pulse" style="animation-delay: 0.4s;"></span>
+                <span class="led-dot red active-pulse" style="animation-delay: 0.1s;"></span>
+              </div>
+              <div class="server-slot"></div>
+              <div class="server-dots-right">
+                <span class="led-dot red active-pulse" style="animation-delay: 0.3s;"></span>
+              </div>
+            </div>
+          </div>
+          <div class="server-unit">
+            <div class="server-face">
+              <div class="server-dots-left">
+                <span class="led-dot red active-pulse" style="animation-delay: 0.5s;"></span>
+                <span class="led-dot red active-pulse" style="animation-delay: 0.3s;"></span>
+              </div>
+              <div class="server-slot"></div>
+              <div class="server-dots-right">
+                <span class="led-dot red active-pulse" style="animation-delay: 0.6s;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Binary Data Stream (Center) -->
+        <div class="binary-stream-viewport">
+          <div class="binary-stream-track" id="binaryStreamTrack">
+            <div class="binary-line">10100101011<span class="red-bit">1</span>000101010101101010101010100101</div>
+            <div class="binary-line">01110100110001<span class="red-bit">0</span>000010101010010101011010101</div>
+            <div class="binary-line">1101010111010100010010<span class="red-bit">0</span>1010100001011110110</div>
+            <div class="binary-line">110101010110110010<span class="red-bit">1</span>01011010100111010111</div>
+          </div>
+          <div class="stream-flow-mask"></div>
+        </div>
+
+        <!-- Laptop Workstation (Right) -->
+        <div class="minimal-laptop">
+          <div class="laptop-screen">
+            <div class="laptop-display-inner" id="laptopDisplayInner">
+              <div class="laptop-spinner" id="laptopSpinner"></div>
+              <svg class="laptop-check" id="laptopCheck" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+          </div>
+          <div class="laptop-base">
+            <div class="laptop-notch"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Clean Status & Progress Section -->
+      <div class="minimal-loader-info">
+        <div class="minimal-phase-text" id="loaderPhaseText">กำลังเชื่อมต่อระบบและถ่ายโอนข้อมูล...</div>
+        
+        <div class="minimal-progress-wrapper">
+          <div class="minimal-progress-track">
+            <div class="minimal-progress-bar" id="loaderCyberBar"></div>
+          </div>
+          <div class="minimal-pct-number" id="loaderPctNumber">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Footer -->
+    <footer class="loader-bottom-footer">
+      <div>บริษัท มูราตะ อิเล็กทรอนิกส์ (ประเทศไทย) จำกัด &bull; Poka-Yoke Workstation</div>
+      <div>Security Hash: OK &bull; Modbus RTU / MQTT Online</div>
+    </footer>
+  </div>
+
+  <!-- Fullscreen User Custom Login (1:1 Murata Inspection DX12 Design) -->
+  <div id="pinLoginScreen" class="custom-login-fullscreen">
+    <div class="custom-login-canvas">
+      
+
+      <!-- Interactive Sign In Card overlay positioned exactly in the card box -->
+      <div class="user-login-card">
+        
+
+        <div class="user-card-header">
+          <h2 class="user-card-title">Sign In</h2>
+          <button type="button" onclick="skipLoginToDashboard()" class="user-skip-btn" title="ข้ามเข้าสู่แดชบอร์ด">✕ ข้าม</button>
+        </div>
+        <p class="user-card-subtitle">Access CiRA CORE to monitor and inspect workpiece packing.</p>
+
+        <form id="userLoginForm" onsubmit="event.preventDefault(); submitOperatorLogin();" autocomplete="on">
+          <!-- Employee ID Field -->
+          <div class="user-input-group">
+            <span class="user-input-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </span>
+            <input type="text" id="loginOperatorInput" name="employee_id" class="user-input-field" 
+                   placeholder="รหัสประจำตัวพนักงาน (เช่น MTL80343)" value="MTL80343" 
+                   autocomplete="username" autofocus required
+                   onkeydown="if(event.key==='Enter') submitOperatorLogin()">
+          </div>
+
+          <!-- Employee Name Field -->
+          <div class="user-input-group">
+            <span class="user-input-icon">
+              <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/></svg>
+            </span>
+            <input type="text" id="loginOperatorNameInput" name="employee_name" class="user-input-field" 
+                   placeholder="ชื่อพนักงาน (เช่น Aun)" value="Aun" 
+                   autocomplete="name" required
+                   onkeydown="if(event.key==='Enter') submitOperatorLogin()">
+          </div>
+
+          <!-- Login Submit Button -->
+          <button type="button" id="loginSubmitBtn" class="user-login-submit-btn" onclick="submitOperatorLogin()">
+            <svg class="login-arrow-icon" viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/></svg>
+            <span>เข้าสู่ระบบ (Login)</span>
+          </button>
+
+          <!-- Error / Status Feedback -->
+          <div id="pinFeedback" class="user-feedback-msg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function skipLoginToDashboard() {
+      sessionStorage.setItem("cira_pin_auth", "true");
+      var loader = document.getElementById("ciraFullscreenLoader");
+      if (loader) {
+        loader.classList.remove("active", "closing");
+        loader.style.display = "none";
+      }
+      var screen = document.getElementById("pinLoginScreen");
+      if (screen) {
+        screen.classList.add("logged-in");
+        screen.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+        screen.style.opacity = "0";
+        screen.style.transform = "scale(1.03)";
+        setTimeout(function() {
+          screen.style.setProperty("display", "none", "important");
+        }, 250);
+      }
+    }
+
+    // Resilient fallback: in case user clicks before full app.js bundle is parsed
+    window.clearSystemDatabase = async function() {
+      var ok = confirm("⚠️ คำเตือน: คุณต้องการล้างฐานข้อมูลการผลิตและประวัติทุกล็อต (ทั้งบนเครื่องและ Cloud) เพื่อเริ่มต้นระบบใหม่ทั้งหมดใช่หรือไม่?");
+      if (!ok) return;
+      try {
+        var res = await fetch("/api/database/clear-all", { method: "POST" });
+        var data = await res.json();
+        if (data && data.success) {
+          alert("✅ ล้างฐานข้อมูลและประวัติการผลิตทั้งหมดเรียบร้อยแล้ว!\nระบบจะรีเฟรชหน้าจอเพื่อเริ่มต้นใหม่");
+          window.location.reload();
+        } else {
+          alert("เกิดข้อผิดพลาดในการล้างข้อมูล: " + (data ? data.error : "Unknown error"));
+        }
+      } catch (err) {
+        alert("ไม่สามารถติดต่อเซิร์ฟเวอร์เพื่อล้างข้อมูลได้: " + err.message);
+      }
+    };
+
+    if (typeof window.submitOperatorLogin !== "function") {
+      window.submitOperatorLogin = function() {
+        if (typeof completeLoginSuccess === "function") {
+          var opInput = document.getElementById("loginOperatorInput");
+          var nameInput = document.getElementById("loginOperatorNameInput");
+          var opId = (opInput ? opInput.value : "").trim() || "MTL80343";
+          var opName = (nameInput ? nameInput.value : "").trim() || "Sitthichok Suriyawong";
+          completeLoginSuccess(opId, opName, true);
+        } else {
+          skipLoginToDashboard();
+        }
+      };
+    }
+  </script>
+
+  <!-- Top Header Bar -->
+  <header class="cyber-header">
+    <div class="header-left-cluster">
+      <span class="murata-pill-badge">MURATA</span>
+      <div class="brand-text-block">
+        <div class="brand-title-row">
+          <span class="brand-title-main">CIRA CORE</span>
+          <span class="brand-title-highlight">Image AI Inspection</span>
+        </div>
+        <div class="brand-subtitle-line">
+          Computer Vision Inspection System | Poka-Yoke | Digital & Data Utilization (DX12)
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-right-cluster">
+      <div class="telemetry-chip">
+        <span id="connDot" class="live-pulse-dot"></span>
+        <span id="connText" class="chip-val">ออนไลน์ (Online)</span>
+      </div>
+
+      <div class="telemetry-chip">
+        <svg style="width: 13px; height: 13px; fill: var(--text-muted);" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span class="chip-label">ผู้ตรวจ:</span>
+        <strong id="headerOperator" class="chip-val">MTL80343</strong>
+        <span id="headerOperatorName" class="chip-val" style="color: #38bdf8; font-weight: 500; margin-left: 4px;">(Aun)</span>
+      </div>
+
+      <div class="telemetry-chip">
+        <svg style="width: 13px; height: 13px; fill: var(--text-muted);" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <strong id="headerLot" class="chip-val">LOT-20261019-02</strong>
+      </div>
+
+      <div class="telemetry-chip">
+        <svg style="width: 13px; height: 13px; fill: var(--text-muted);" viewBox="0 0 24 24"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+        <strong id="headerModel" class="chip-val">MURATA-IND-405</strong>
+      </div>
+
+      <!-- Real-time Digital Clock -->
+      <div class="digital-clock-chip">
+        <svg class="clock-icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        <div class="clock-date-time">
+          <span class="clock-date" id="clockDate">19 Oct 2026</span>
+          <span class="clock-time" id="clockTime">14:32:18</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar (Tabs & Action Utilities) -->
+  <nav class="cyber-nav-container">
+    <div class="nav-tabs-group">
+      <!-- Tab 1: Live Inspection (Active with Crimson Outline/Glow) -->
+      <div class="cyber-tab active" onclick="switchTab('live')">
+        <div class="tab-icon-box">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9.4 10.5l4.77-8.26C13.47 2.09 12.75 2 12 2 6.48 2 2 6.48 2 12s4.48 10 10 10c5.52 0 10-4.48 10-10 0-.75-.09-1.47-.24-2.17L14.6 15.6c-.63.95-1.7 1.57-2.9 1.57-1.93 0-3.5-1.57-3.5-3.5 0-.48.1-.93.28-1.34l.92-1.83z"/></svg>
+        </div>
+        <div class="tab-text-box">
+          <span class="tab-main-text">หน้าจอตรวจจับสด</span>
+          <span class="tab-sub-text">Live Inspection</span>
+        </div>
+      </div>
+
+      <!-- Tab 2: Quality & Yield Analytics Monitoring -->
+      <div class="cyber-tab" onclick="switchTab('analytics')">
+        <div class="tab-icon-box">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        </div>
+        <div class="tab-text-box">
+          <span class="tab-main-text">แดชบอร์ดคุณภาพ</span>
+          <span class="tab-sub-text">Quality & Yield</span>
+        </div>
+      </div>
+
+      <!-- Tab 3: Traceability / Lot History -->
+      <div class="cyber-tab" onclick="switchTab('trace')">
+        <div class="tab-icon-box">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
+        <div class="tab-text-box">
+          <span class="tab-main-text">ประวัติล็อต</span>
+          <span class="tab-sub-text">Lot History & Traceability</span>
+        </div>
+      </div>
+
+      <!-- Tab 3: Hardware & Relay -->
+      <div class="cyber-tab" onclick="switchTab('settings')">
+        <div class="tab-icon-box">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+        </div>
+        <div class="tab-text-box">
+          <span class="tab-main-text">การเชื่อมต่อและฮาร์ดแวร์</span>
+          <span class="tab-sub-text">Hardware & Relay</span>
+        </div>
+      </div>
+
+      <!-- Tab 4: Back Button (กลับ) -->
+      <div class="cyber-tab cyber-tab-back" onclick="handleNavbarBack()" title="ย้อนกลับไปหน้าตรวจสอบ / หน้าก่อนหน้า">
+        <div class="tab-icon-box">
+          <svg style="width: 17px; height: 17px; fill: currentColor;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </div>
+        <div class="tab-text-box">
+          <span class="tab-main-text">กลับ</span>
+          <span class="tab-sub-text">Back</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Utility Buttons -->
+    <div class="nav-utilities-group">
+      <!-- Supabase Cloud Sync Status Pill -->
+      <button class="nav-util-btn" id="supabaseCloudPill" onclick="checkSupabaseStatusManual()" style="background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10b981; color: #10b981; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;" title="คลิกเพื่อตรวจสอบการเชื่อมต่อ Supabase Cloud หรือซิงค์ข้อมูล">
+        <span id="supabasePillDot" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981; display: inline-block;"></span>
+        <span id="supabasePillText">☁️ Supabase: Online</span>
+      </button>
+      <!-- Direct Quick Button to Lot History -->
+      <button class="nav-util-btn" onclick="switchTab('trace')" style="background: rgba(56, 189, 248, 0.15); border: 1.5px solid #38bdf8; color: #38bdf8; font-weight: 700;" title="ดูประวัติการผลิตและข้อมูลย้อนหลังทุกล็อต">
+        <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+        <span>📋 ดูประวัติล็อต</span>
+      </button>
+
+      <!-- Theme Toggle -->
+      <button class="nav-util-btn" id="themeToggleBtn" onclick="toggleTheme()" title="สลับโหมดสว่าง / โหมดมืด">
+        <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+        <span id="themeBtnText">โหมดสว่าง</span>
+      </button>
+
+      <!-- Notifications with Red Badge (3) -->
+      <button class="nav-util-btn" onclick="toggleNotifyDrawer()" title="เปิดศูนย์แจ้งเตือน">
+        <svg style="width: 14px; height: 14px; fill: #f87171;" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+        <span>แจ้งเตือน</span>
+        <span class="notify-badge-pill" id="notifyBadgeCount">3</span>
+      </button>
+
+      <!-- Logout / Lock to PIN -->
+      <button class="nav-util-btn" onclick="lockToPin()" title="ออกจากระบบ / ล็อกหน้าจอ">
+        <svg style="width: 14px; height: 14px; fill: #fbbf24;" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span>ออกจากระบบ</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- TAB 1: LIVE INSPECTION -->
+  <main id="tabLive" class="dashboard-grid-layout">
+    
+    <!-- LEFT COLUMN: Signboard, Live Camera, Barcode Input, Simulation Drawer -->
+    <div class="dashboard-column">
+      
+      <!-- AI Result Signboard (Top of Camera) -->
+      <div id="hmiStatusBar" class="ai-result-signboard pass">
+        <div class="signboard-left">
+          <div class="signboard-circle-icon" id="signCircleIcon">
+            <svg id="signCheckSvg" style="width: 22px; height: 22px; fill: #ffffff;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          </div>
+          <div class="signboard-text-block">
+            <div class="signboard-headline" id="statusHeadline">ผลตรวจ: G (หลีดเดอร์อนุมัติโดย LEADER-01)</div>
+            <div class="signboard-subdetail" id="statusCaption">ได้รับการยืนยันผลตรวจจาก AI ตาม Flowchart</div>
+          </div>
+        </div>
+
+        <div class="signboard-confidence-block">
+          <div class="confidence-values">
+            <span class="conf-pct-number" id="statusConf">99.0%</span>
+            <span class="conf-label-text">CONFIDENCE</span>
+          </div>
+          <div class="signal-bars-icon" title="ความเชื่อมั่นสัญญาณ AI สูงสุด">
+            <span class="bar b1"></span>
+            <span class="bar b2"></span>
+            <span class="bar b3"></span>
+            <span class="bar b4"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Video Viewport Card -->
+      <div class="camera-viewport-card" id="cameraWindow">
+        <!-- Live Tag (Top-Left) -->
+        <div class="cam-overlay-top-left">
+          <div class="live-badge-pill">LIVE</div>
+        </div>
+
+        <!-- 3 Overlay Action Buttons (Top-Right) -->
+        <div class="cam-overlay-top-right">
+          <!-- Digital Zoom -->
+          <button class="cam-action-btn" onclick="toggleCamZoom()" title="ซูมดิจิทัล (1x / 1.5x / 2x)">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></svg>
+          </button>
+          <!-- Crosshair ROI Grid -->
+          <button class="cam-action-btn" onclick="toggleRoiGuide()" title="เปิด/ปิด เส้นเล็ง Poka-Yoke ROI">
+            <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+          </button>
+          <!-- Fullscreen -->
+          <button class="cam-action-btn" onclick="toggleCamFullscreen()" title="ขยายเต็มหน้าจอ (Fullscreen)">
+            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+        </div>
+
+        <!-- Camera Stream Feed Image -->
+        <img id="liveFeedImg" src="/video_feed" alt="CiRA CORE Live Stream">
+
+        <!-- Inspection ROI Guide Overlay -->
+        <div class="camera-roi-guide" id="camRoiGuide"></div>
+
+        <!-- Dedicated 3.0s Result Hold Countdown HUD Overlay -->
+        <div class="cam-countdown-overlay" id="camCountdownOverlay" style="display: none;">
+          <div class="cam-countdown-title" id="camCountdownTitle">
+            <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+            <span id="camCountdownTitleText">กำลังแสดงผลตรวจจับค้างไว้ 3 วินาที</span>
+          </div>
+          <div class="cam-countdown-row">
+            <span class="cam-countdown-seconds" id="camCountdownSec">3.0</span>
+            <span class="cam-countdown-unit">วินาที (s)</span>
+          </div>
+          <div class="cam-countdown-progress-bar">
+            <div class="cam-countdown-progress-fill" id="camCountdownBar" style="width: 100%;"></div>
+          </div>
+          <div class="cam-countdown-subtext" id="camCountdownSubtext">
+            ⏱ นับถอยหลังครบ 3 วินาที ➔ บันทึกไฟล์ภาพและประวัติลงฐานข้อมูล
+          </div>
+        </div>
+
+        <!-- Box Barcode Tag (Bottom-Left) -->
+        <div class="cam-overlay-bottom-left">
+          <div class="box-barcode-pill">
+            <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9.4 10.5l4.77-8.26C13.47 2.09 12.75 2 12 2 6.48 2 2 6.48 2 12s4.48 10 10 10c5.52 0 10-4.48 10-10 0-.75-.09-1.47-.24-2.17L14.6 15.6c-.63.95-1.7 1.57-2.9 1.57-1.93 0-3.5-1.57-3.5-3.5 0-.48.1-.93.28-1.34l.92-1.83z"/></svg>
+            <span>กล่องปัจจุบัน: </span>
+            <strong id="viewBoxBarcode">BX-C3B086 (พร้อมตรวจกล่องถัดไป)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barcode Input and Scan Action -->
+      <div class="barcode-action-row">
+        <div class="barcode-input-wrapper">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          <input type="text" id="barcodeInput" placeholder="ยิงหรือพิมพ์บาร์โค้ดกล่องงาน (เช่น BX-001) แล้วกด Enter" autofocus>
+        </div>
+        <button class="btn-cyan-scan" id="btnScan" onclick="submitBarcode()">
+          <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <span>สแกนกล่อง</span>
+        </button>
+        <button id="btnForceCloseLot" class="btn-cyan-scan" onclick="openLotRegScreen(true, true)" style="display: none; background: linear-gradient(90deg, #d60525, #ef4444); border-color: #f87171;" title="ตรวจครบเป้าหมายแล้ว คลิกเพื่อปิดล็อตและสรุปยอดทันที">
+          <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+          <span>บังคับปิดล็อต (ครบ 3/3 กล่อง)</span>
+        </button>
+        <button id="btnBypass" class="btn-warning-bypass" onclick="openBypassModal()">
+          <span>ขออนุมัติข้ามกล่อง (Bypass)</span>
+        </button>
+        <button id="btnClearAlarm" class="btn-mute-alarm" onclick="clearAlarm()">
+          <span>ปิดเสียงเตือน</span>
+        </button>
+      </div>
+
+      <!-- Simulation Testing Mode Drawer (Subdued bottom container) -->
+      <div class="simulation-dock-card">
+        <div class="simulation-dock-header">
+          <svg style="width: 13px; height: 13px; fill: var(--text-muted);" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+          <span>โหมดจำลองผลตรวจ AI (สำหรับทดสอบ / เดโมระบบ)</span>
+        </div>
+        <div class="simulation-buttons-row">
+          <button class="sim-btn good" id="btnSimGood" onclick="triggerInspection('G')">
+            <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span>จำลองตรวจดี (Good: G)</span>
+          </button>
+          <button class="sim-btn ng" id="btnSimNG" onclick="triggerInspection('NG')">
+            <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <span>จำลองตรวจเสีย (NG: Tape)</span>
+          </button>
+          <button class="sim-btn random" id="btnSimRandom" onclick="triggerInspection('RANDOM')">
+            <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            <span>สุ่มตรวจจับ (CiRA AI)</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Lot Progress, 3x KPIs, Donut & Bar Chart, Tower Lamp, Dummy Test, Close Lot -->
+    <div class="dashboard-column">
+      
+      <!-- Lot Progress Card -->
+      <div class="lot-progress-card">
+        <div class="progress-title-row">
+          <div class="progress-title-text">
+            <svg style="width: 14px; height: 14px; fill: #0284c7;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <span>ความคืบหน้าของล็อต (Lot Progress)</span>
+          </div>
+          <div class="progress-numbers-text">
+            <span id="progressBoxesText">2 / 20</span> กล่อง (<span id="progressPctText">10%</span>)
+          </div>
+        </div>
+        <div class="flat-progress-track">
+          <div class="flat-progress-bar" id="lotProgressBar" style="width: 10%;"></div>
+        </div>
+      </div>
+
+      <!-- 3-Column Top KPI Metrics Row -->
+      <div class="kpi-row-triplet">
+        <!-- Box Done -->
+        <div class="kpi-block">
+          <div class="kpi-icon-square blue">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          </div>
+          <div class="kpi-text-block">
+            <span class="kpi-label-small">กล่องที่ตรวจแล้ว</span>
+            <span class="kpi-value-large"><span id="statBoxesDone">2</span> / <span id="statTargetBoxes">20</span></span>
+          </div>
+          <div class="kpi-bottom-accent-bar blue"></div>
+        </div>
+
+        <!-- Good Pieces -->
+        <div class="kpi-block">
+          <div class="kpi-icon-square green">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          </div>
+          <div class="kpi-text-block">
+            <span class="kpi-label-small">ชิ้นงานดี (GOOD)</span>
+            <span class="kpi-value-large green" id="statGoodPieces">100 ชิ้น</span>
+          </div>
+          <div class="kpi-bottom-accent-bar green"></div>
+        </div>
+
+        <!-- Defect Pieces -->
+        <div class="kpi-block">
+          <div class="kpi-icon-square red">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </div>
+          <div class="kpi-text-block">
+            <span class="kpi-label-small">ชิ้นงานเสีย (DEFECT)</span>
+            <span class="kpi-value-large red" id="statDefectPieces">0 ชิ้น</span>
+          </div>
+          <div class="kpi-bottom-accent-bar red"></div>
+        </div>
+      </div>
+
+      <!-- 2-Column Bottom Metric Row (Donut Ring & 20-Bar Chart) -->
+      <div class="kpi-row-charts">
+        <!-- Yield Rate with Donut Ring -->
+        <div class="chart-card-block">
+          <div class="chart-header-line">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+              <span>อัตราผลผลิต (YIELD)</span>
+            </div>
+          </div>
+          <div class="donut-widget-wrapper">
+            <span class="donut-val-big" id="statYieldRate">100.0%</span>
+            <svg class="donut-svg-ring" viewBox="0 0 36 36">
+              <circle class="donut-bg-circle" cx="18" cy="18" r="14"></circle>
+              <circle class="donut-fill-circle" id="donutProgressCircle" cx="18" cy="18" r="14" stroke-dasharray="88" stroke-dashoffset="0"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Per-Box Inspection 20-Bar Chart -->
+        <div class="chart-card-block">
+          <div class="chart-header-line">
+            <span>กราฟผลผลิตรายกล่อง</span>
+            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);">100%</span>
+          </div>
+          <div class="per-box-chart-grid" id="perBoxChartContainer">
+            <!-- 20 Bars dynamically populated by JS -->
+          </div>
+          <div class="box-chart-axis-labels">
+            <span>0</span>
+            <span>5</span>
+            <span>10</span>
+            <span>15</span>
+            <span>20</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hardware Signals & Tower Lamp Card -->
+      <div class="hardware-signals-card">
+        <div class="hardware-card-header">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #0284c7; display: inline-block;"></span>
+          <span>สถานะสัญญาณเตือนและฮาร์ดแวร์ (TOWER LAMP & BUZZER)</span>
+        </div>
+
+        <div class="hardware-card-content">
+          <!-- 3D Realistic Tower Lamp Column -->
+          <div class="tower-fixture-column">
+            <div class="tower-dome-top"></div>
+            <div id="lampRed" class="tower-tier red" title="Ch 2: Red Lamp (NG)"></div>
+            <div id="lampYellow" class="tower-tier yellow on" title="Ch 3: Yellow Lamp (Standby/Delay)"></div>
+            <div id="lampGreen" class="tower-tier green" title="Ch 1: Green Lamp (Good G)"></div>
+            <div class="tower-pole-base"></div>
+            <div class="tower-stand-mount"></div>
+          </div>
+
+          <!-- Center Toggle Switches -->
+          <div class="switches-column">
+            <!-- Buzzer Switch -->
+            <div class="switch-item-row">
+              <div class="switch-label-group">
+                <svg style="width: 14px; height: 14px; fill: #fbbf24;" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                <span>24V Buzzer</span>
+              </div>
+              <div class="cyber-switch-pill" id="switchBuzzer" onclick="toggleVirtualSwitch('buzzer')">
+                <span class="switch-text">OFF</span>
+              </div>
+            </div>
+
+            <!-- Red Lamp Switch -->
+            <div class="switch-item-row">
+              <div class="switch-label-group">
+                <span class="channel-indicator-dot red"></span>
+                <span>Tower Lamp (Red)</span>
+              </div>
+              <div class="cyber-switch-pill" id="switchRed" onclick="toggleVirtualSwitch('red')">
+                <span class="switch-text">OFF</span>
+              </div>
+            </div>
+
+            <!-- Yellow Lamp Switch -->
+            <div class="switch-item-row">
+              <div class="switch-label-group">
+                <span class="channel-indicator-dot yellow"></span>
+                <span>Tower Lamp (Yellow)</span>
+              </div>
+              <div class="cyber-switch-pill on" id="switchYellow" onclick="toggleVirtualSwitch('yellow')">
+                <span class="switch-text">ON</span>
+              </div>
+            </div>
+
+            <!-- Green Lamp Switch -->
+            <div class="switch-item-row">
+              <div class="switch-label-group">
+                <span class="channel-indicator-dot green"></span>
+                <span>Tower Lamp (Green)</span>
+              </div>
+              <div class="cyber-switch-pill" id="switchGreen" onclick="toggleVirtualSwitch('green')">
+                <span class="switch-text">OFF</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Modbus Controller Card -->
+          <div class="plc-terminal-card">
+            <div class="plc-header-line">
+              <span style="font-weight: 700; color: var(--text-secondary);">Modbus RTU (RS485)</span>
+              <span class="plc-online-pill">Online</span>
+            </div>
+            <div class="plc-channel-row" id="plcRow1">
+              <span>Ch 1 (เขียว):</span>
+              <span id="relayCh1">OFF</span>
+            </div>
+            <div class="plc-channel-row" id="plcRow2">
+              <span>Ch 2 (แดง):</span>
+              <span id="relayCh2">OFF</span>
+            </div>
+            <div class="plc-channel-row active" id="plcRow3">
+              <span>Ch 3 (เหลือง):</span>
+              <span id="relayCh3">ON</span>
+            </div>
+            <div class="plc-channel-row" id="plcRow4">
+              <span>Ch 4 (เสียง):</span>
+              <span id="relayCh4">OFF</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pre-Shift Dummy Test Card -->
+      <div class="dummy-verification-card">
+        <div class="dummy-header-text">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #0284c7; display: inline-block;"></span>
+          <span>การทดสอบระบบก่อนเริ่มงาน (DUMMY TEST POKA-YOKE)</span>
+        </div>
+        <div class="dummy-buttons-dual">
+          <button class="btn-dummy-action good" id="btnDummyGood" onclick="runDummyTest('GOOD_SAMPLE')">
+            <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span id="dummyGoodLabel">ตัวอย่างดี (G)</span>
+          </button>
+          <button class="btn-dummy-action ng" id="btnDummyNG" onclick="runDummyTest('NG_SAMPLE')">
+            <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <span id="dummyNGLabel">ตัวอย่างเสีย (NG)</span>
+          </button>
+        </div>
+      </div>
+ 
+      <!-- Big Decision Result Display Card (Pure Giant N / NG Display) -->
+      <div id="bigDecisionCard" class="big-decision-card standby">
+        <div class="decision-giant-symbol-center" id="decisionSymbolBox">
+          <span id="decisionSymbolText">STANDBY</span>
+        </div>
+      </div>
+
+      <!-- Close Lot Button (Giant Blue Gradient Full-Width) -->
+      <button class="btn-close-lot-giant" onclick="openLotCloseModal()">
+        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
+        <span>ปิดล็อตการผลิต (Close Lot)</span>
+      </button>
+
+    </div>
+  </main>
+
+  <!-- TAB: QUALITY ANALYTICS & MONITORING DASHBOARD (Real-time G/NG & Pareto) -->
+  <main id="tabAnalytics" class="cyber-panel-card" style="display: none; margin: 12px 16px; flex: 1;">
+    <!-- Top Action / Control Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 10px #38bdf8;"></span>
+          <h2 style="font-size: 17px; font-weight: 800; color: var(--text-primary); margin: 0;">
+            แดชบอร์ดติดตามคุณภาพและการวิเคราะห์ของเสีย (Quality Analytics & Pareto Monitoring)
+          </h2>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 18px;">
+          ระบบแสดงผลการวิเคราะห์ชิ้นงาน G / NG เรียลไทม์และสถิติการควบคุมสายการผลิตตามมาตรฐาน Murata DX12
+        </p>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <!-- Auto Refresh Toggle -->
+        <div style="display: flex; align-items: center; gap: 6px; background: var(--bg-card-sub); padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); font-size: 12px;">
+          <span style="color: var(--text-muted);">อัปเดตอัตโนมัติ (Live 5s):</span>
+          <input type="checkbox" id="analyticsAutoRefresh" checked onchange="toggleAnalyticsAutoRefresh(this.checked)" style="cursor: pointer; accent-color: #38bdf8;">
+        </div>
+
+        <button class="btn-cyan-scan" onclick="loadAnalyticsDashboard(true)" style="padding: 7px 14px; font-size: 12px;">
+          <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          <span>รีเฟรชข้อมูล</span>
+        </button>
+
+        <button class="nav-util-btn" onclick="exportAnalyticsReportCSV()" style="padding: 7px 12px; font-size: 12px;" title="ส่งออกรายงานสถิติเป็น CSV">
+          <span>Export สถิติ CSV</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ROW 1: 5 Top KPI Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
+      <!-- Total Inspected -->
+      <div class="kpi-block">
+        <div class="kpi-icon-square blue">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </div>
+        <div class="kpi-text-block">
+          <span class="kpi-label-small">กล่องที่ตรวจทั้งหมด</span>
+          <span class="kpi-value-large" id="anaTotalBoxes">0 กล่อง</span>
+        </div>
+        <div class="kpi-bottom-accent-bar blue"></div>
+      </div>
+
+      <!-- Good Pieces -->
+      <div class="kpi-block">
+        <div class="kpi-icon-square green">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+        <div class="kpi-text-block">
+          <span class="kpi-label-small">ชิ้นงานดีที่ผ่าน (Good)</span>
+          <span class="kpi-value-large green" id="anaGoodPieces">0 ชิ้น</span>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);" id="anaGoodBoxesSub">(0 กล่อง)</span>
+        </div>
+        <div class="kpi-bottom-accent-bar green"></div>
+      </div>
+
+      <!-- Defect Pieces -->
+      <div class="kpi-block">
+        <div class="kpi-icon-square red">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </div>
+        <div class="kpi-text-block">
+          <span class="kpi-label-small">ชิ้นงานเสียคัดออก (Defect)</span>
+          <span class="kpi-value-large red" id="anaDefectPieces">0 ชิ้น</span>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);" id="anaDefectBoxesSub">(0 กล่อง)</span>
+        </div>
+        <div class="kpi-bottom-accent-bar red"></div>
+      </div>
+
+      <!-- Overall Yield Rate -->
+      <div class="kpi-block">
+        <div class="kpi-icon-square yellow">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        </div>
+        <div class="kpi-text-block">
+          <span class="kpi-label-small">อัตราผลผลิตรวม (Yield Rate)</span>
+          <span class="kpi-value-large yellow" id="anaYieldRate">100.0%</span>
+          <span style="font-size: 11px; color: var(--text-muted);" id="anaYieldTarget">เป้าหมาย &ge; 98.0%</span>
+        </div>
+        <div class="kpi-bottom-accent-bar yellow"></div>
+      </div>
+
+      <!-- Average Cycle Time -->
+      <div class="kpi-block">
+        <div class="kpi-icon-square blue">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        </div>
+        <div class="kpi-text-block">
+          <span class="kpi-label-small">เวลาตรวจเฉลี่ย (Takt Time)</span>
+          <span class="kpi-value-large" id="anaAvgCycleTime">2,350 ms</span>
+          <span style="font-size: 11px; color: var(--text-muted);">(รวมหน่วงภาพ 2.0s)</span>
+        </div>
+        <div class="kpi-bottom-accent-bar blue"></div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Pareto Defect Analysis & Quality Distribution -->
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; margin-bottom: 16px;">
+      <!-- Left: Pareto Defect Analysis -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 6px;">
+              <span>แผนภูมิพาเรโตวิเคราะห์สาเหตุงานเสีย (Pareto Defect Analysis)</span>
+            </h3>
+            <span style="font-size: 11px; color: var(--text-muted);">จัดอันดับความถี่ของเสียตามหลักการ 80/20 เพื่อการปรับปรุงคุณภาพ</span>
+          </div>
+          <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); color: #f87171; font-weight: 700;" id="anaParetoTotalDefects">
+            รวม 0 รายการ
+          </span>
+        </div>
+
+        <div id="anaParetoContainer" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Dynamically populated Pareto rows -->
+          <div style="text-align: center; color: var(--text-muted); padding: 20px;">กำลังประมวลผลข้อมูลพาเรโต...</div>
+        </div>
+
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
+          <span>💡 <strong>คำแนะนำเชิงคุณภาพ:</strong> เน้นแก้ไข 2 อันดับแรก จะลดของเสียในกระบวนการบรรจุได้สูงสุด</span>
+          <span id="anaParetoTop2Pct" style="color: #38bdf8; font-weight: 700;"></span>
+        </div>
+      </div>
+
+      <!-- Right: Quality Distribution Gauge & Poka-Yoke Status -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0;">
+            สัดส่วนการตัดสินใจของ AI (Quality Breakdown)
+          </h3>
+          <span style="font-size: 11px; color: var(--text-muted);">การกระจายตัวของผลการตรวจจับและการอนุมัติ</span>
+
+          <!-- Proportion Visual Bars -->
+          <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+            <!-- Good Pass -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span style="color: #34d399; font-weight: 600;">✔ งานถูกต้องผ่านเกณฑ์ (Good Pass)</span>
+                <strong id="anaDistGoodPct">0%</strong>
+              </div>
+              <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+                <div id="anaDistGoodBar" style="height: 100%; width: 0%; background: #34d399; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Defect NG -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span style="color: #f87171; font-weight: 600;">✖ ตรวจพบของเสีย (Defect NG)</span>
+                <strong id="anaDistNgPct">0%</strong>
+              </div>
+              <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+                <div id="anaDistNgBar" style="height: 100%; width: 0%; background: #f87171; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Bypassed by Leader -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span style="color: #fbbf24; font-weight: 600;">⚡ หัวหน้าอนุมัติข้าม (Leader Bypassed)</span>
+                <strong id="anaDistBypassPct">0%</strong>
+              </div>
+              <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+                <div id="anaDistBypassBar" style="height: 100%; width: 0%; background: #fbbf24; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Poka-Yoke & System Status Banner -->
+        <div style="background: var(--bg-card-sub); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; margin-top: 16px;">
+          <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 4px;">
+            POKA-YOKE COMPLIANCE STATUS
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+            <span>การสอบเทียบ Dummy Test:</span>
+            <span id="anaDummyComplianceBadge" style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: rgba(52, 211, 153, 0.15); color: #34d399;">
+              PASS (พร้อมผลิต)
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: 4px;">
+            <span>ความมั่นใจ AI เฉลี่ย:</span>
+            <strong style="color: var(--text-primary); font-family: var(--font-mono);" id="anaConfidenceAvg">99.0%</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Lot Comparison Table & Recent Defect Feed -->
+    <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px;">
+      <!-- Left: Lot Comparison Table -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;">
+            เปรียบเทียบคุณภาพรายล็อตการผลิต (Lot Quality Comparison)
+          </h3>
+          <span style="font-size: 11px; color: var(--text-muted);">10 ล็อตล่าสุด</span>
+        </div>
+        <div class="table-responsive-box" style="max-height: 38vh; overflow-y: auto;">
+          <table class="cyber-table" style="font-size: 12px;">
+            <thead>
+              <tr>
+                <th>หมายเลขล็อต</th>
+                <th>รุ่นชิ้นงาน</th>
+                <th>ตรวจแล้ว / เป้าหมาย</th>
+                <th>งานดี / เสีย</th>
+                <th>Yield Rate</th>
+                <th>สถานะ</th>
+              </tr>
+            </thead>
+            <tbody id="anaLotsTableBody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 16px;">กำลังโหลดข้อมูลเปรียบเทียบล็อต...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right: Recent Defect Incidents Feed with 1-click preview -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #f87171; display: inline-block;"></span>
+            <span>รายการตรวจพบงานเสียล่าสุด (Recent Defect Feed)</span>
+          </h3>
+          <span style="font-size: 11px; color: var(--text-muted);">คลิกดูภาพหลักฐาน</span>
+        </div>
+        <div id="anaRecentDefectsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 38vh; overflow-y: auto;">
+          <div style="text-align: center; color: var(--text-muted); padding: 20px;">กำลังโหลดประวัติของเสีย...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TAB 3: TRACEABILITY HISTORY (Drill-down: Lots Overview <-> Lot Detail) -->
+  <main id="tabTrace" class="cyber-panel-card" style="display: none; margin: 12px 16px; flex: 1;">
+    
+    <!-- SUB-VIEW 1: LOTS OVERVIEW (หน้ารวมทุกล็อต) -->
+    <div id="viewLotsOverview">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h3 style="color: var(--text-primary); font-size: 16px; font-weight: 700;">
+            ประวัติการผลิตทุกล็อต (Production Lots Summary)
+          </h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            คลิกที่แถวหรือปุ่ม "ดูรายละเอียด" เพื่อเปิดดูข้อมูลกล่องและรูปหลักฐานเฉพาะล็อตนั้น
+          </p>
+        </div>
+        
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="searchLotListInput" placeholder="พิมพ์ค้นหาหมายเลขล็อต..." oninput="filterLotsList(this.value)" style="padding: 7px 12px; background: var(--bg-input); border: 1px solid var(--border-strong); color: var(--text-primary); border-radius: 6px; font-size: 12px; font-family: var(--font-mono); min-width: 200px;">
+          <button class="btn-cyan-scan" onclick="returnFromLotHistory()" style="padding: 7px 14px; background: #0284c7;" title="กลับไปหน้าตรวจจับ / สแกนกล่องต่อ">
+            <span>⬅ กลับหน้าตรวจจับ / ดำเนินการต่อ</span>
+          </button>
+          <button class="btn-cyan-scan" onclick="viewCurrentActiveLot()" style="padding: 7px 14px;" title="เปิดดูประวัติกล่องของล็อตปัจจุบันที่กำลังผลิตทันที">
+            <span>ดูกล่องของล็อตปัจจุบัน</span>
+          </button>
+          <button class="nav-util-btn" onclick="openLegacyHistoryModal()" style="padding: 7px 12px; background: rgba(56, 189, 248, 0.15); border: 1.5px solid #38bdf8; color: #38bdf8; font-weight: 700;" title="ดูข้อมูลโครงสร้างเดิม 16 คอลัมน์จาก Supabase Cloud">
+            <span>☁️ ข้อมูลเดิม 16 คอลัมน์ (Supabase)</span>
+          </button>
+          <button class="nav-util-btn" onclick="triggerManualSupabaseSync()" style="padding: 7px 12px; background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10b981; color: #10b981; font-weight: 700;" title="ซิงค์ข้อมูลทั้งหมดขึ้น Supabase Cloud ทันที">
+            <span>🔄 ซิงค์ขึ้น Cloud</span>
+          </button>
+          <button class="nav-util-btn" onclick="loadLotsSummary()" style="padding: 7px 12px;">
+            <span>รีเฟรชข้อมูล</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive-box" style="max-height: 65vh; overflow-y: auto;">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>หมายเลขล็อต (Lot No)</th>
+              <th>ผู้ปฏิบัติงาน</th>
+              <th>รุ่น (Part Model)</th>
+              <th>กล่องที่ตรวจ / เป้าหมาย</th>
+              <th>ชิ้นงานดี (Output)</th>
+              <th>ชิ้นงานเสีย (Defect)</th>
+              <th>สถานะล็อต</th>
+              <th>เวลาเริ่ม - ปิดล็อต</th>
+              <th style="text-align: center;">การกระทำ</th>
+            </tr>
+          </thead>
+          <tbody id="lotsTableBody">
+            <tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 24px;">กำลังโหลดข้อมูลล็อต...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUB-VIEW 2: LOT DETAIL (หน้ารายละเอียดย่อยเฉพาะล็อตที่เลือก) -->
+    <div id="viewLotDetail" style="display: none;">
+      <!-- Top Action Navigation -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <button class="btn-back-lots" onclick="showLotsOverview()">
+          <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          <span>ย้อนกลับไปหน้ารวมทุกล็อต</span>
+        </button>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-cyan-scan" onclick="returnFromLotHistory()" style="padding: 7px 14px; background: #0284c7;" title="กลับไปหน้าตรวจจับ / สแกนกล่องต่อ">
+            <span>⬅ กลับหน้าตรวจจับ / ดำเนินการต่อ</span>
+          </button>
+          <button class="btn-cyan-scan" onclick="exportCurrentLotCSV()" style="padding: 7px 14px;">
+            <span>Export CSV เฉพาะล็อตนี้</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lot Summary Header Banner -->
+      <div class="lot-summary-header-card" id="lotSummaryHeader">
+        <div class="lot-summary-badge-group">
+          <div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">หมายเลขล็อตที่เลือก:</div>
+            <div class="lot-badge-large" id="detailLotNumber">LOT-20261019-02</div>
+          </div>
+          <div class="telemetry-chip">
+            <span class="chip-label">รุ่น:</span>
+            <strong id="detailPartModel" class="chip-val">-</strong>
+          </div>
+          <div class="telemetry-chip">
+            <span class="chip-label">ผู้ตรวจ:</span>
+            <strong id="detailOperator" class="chip-val">-</strong>
+          </div>
+          <div id="detailStatusBadge"></div>
+        </div>
+
+        <div class="lot-summary-stats-cluster">
+          <div class="lot-stat-chip">
+            <span class="chip-label">กล่องที่ตรวจ</span>
+            <span class="chip-value" id="detailBoxesProgress">0 / 20</span>
+          </div>
+          <div class="lot-stat-chip">
+            <span class="chip-label">ชิ้นงานดี (Output)</span>
+            <span class="chip-value" style="color: #34d399;" id="detailGoodOutput">0 ชิ้น</span>
+          </div>
+          <div class="lot-stat-chip">
+            <span class="chip-label">ชิ้นงานเสีย (Defect)</span>
+            <span class="chip-value" style="color: #f87171;" id="detailDefectOutput">0 ชิ้น</span>
+          </div>
+          <div class="lot-stat-chip">
+            <span class="chip-label">อัตราของดี (Yield)</span>
+            <span class="chip-value" style="color: #38bdf8;" id="detailYieldRate">100.0%</span>
+          </div>
+          <div class="lot-stat-chip">
+            <span class="chip-label">เวลาเริ่ม - ปิดล็อต</span>
+            <span class="chip-value" style="font-size: 11px; font-weight: normal; color: var(--text-muted);" id="detailTimestamps">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Inspections Table for Chosen Lot -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+        <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+          <span>รายการกล่องและรูปหลักฐานเฉพาะล็อตนี้ (Box Inspections & Evidence)</span>
+        </h4>
+        <input type="text" id="searchBoxBarcode" placeholder="พิมพ์ค้นหารหัสกล่อง (Barcode)..." oninput="filterBoxTable(this.value)" style="padding: 6px 12px; background: var(--bg-input); border: 1px solid var(--border-strong); color: var(--text-primary); border-radius: 6px; font-size: 12px; font-family: var(--font-mono); min-width: 220px;">
+      </div>
+
+      <div class="table-responsive-box" style="max-height: 52vh; overflow-y: auto;">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>รูปหลักฐาน</th>
+              <th>วัน-เวลาที่ตรวจ</th>
+              <th>รหัสกล่อง (Barcode)</th>
+              <th>โต๊ะตรวจ</th>
+              <th>ผู้ตรวจสอบ</th>
+              <th>ผล AI</th>
+              <th>ผลสรุป (Final)</th>
+              <th>ความเชื่อมั่น</th>
+              <th>หัวหน้างานอนุมัติ</th>
+              <th>ดูภาพขยาย</th>
+            </tr>
+          </thead>
+          <tbody id="lotDetailTableBody">
+            <tr>
+              <td colspan="11" style="text-align: center; color: var(--text-muted); padding: 24px;">กำลังโหลดข้อมูลกล่อง...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- TAB 3: SETTINGS & HARDWARE (Centered & Clean) -->
+  <main id="tabSettings" style="display: none; width: 100%; padding: 24px 16px; box-sizing: border-box;">
+    <div class="cyber-panel-card settings-centered-box">
+      <div class="settings-box-header">
+        <h2 style="font-size: 17px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+          <span>⚙️</span>
+          <span>ตั้งค่าระบบและการเชื่อมต่อฮาร์ดแวร์</span>
+        </h2>
+        <span class="settings-badge-pill">● พร้อมใช้งาน</span>
+      </div>
+      
+      <div class="form-group-cyber" style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+        <label style="color: #38bdf8; font-weight: 800; font-size: 13px;">🖥️ หมายเลขโต๊ะตรวจประจำเครื่องนี้ (STATION / TABLE NO):</label>
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <input type="text" id="settingStationTableNo" value="Offline07" placeholder="เช่น Offline07 หรือ Offline08" style="flex: 1; padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 13px;">
+          <button type="button" class="nav-util-btn" onclick="saveStationTableSetting()" style="padding: 8px 16px; background: #0284c7; color: #fff; font-weight: 800; border-radius: 6px; border: none; cursor: pointer;">💾 บันทึกโต๊ะ</button>
+        </div>
+        <small style="color: #94a3b8; font-size: 11px; margin-top: 6px; display: block;">* เครื่องนี้จะใช้หมายเลขโต๊ะนี้ระบุในประวัติการสแกนกล่องงาน เพื่อให้รู้ว่ากล่องไหนตรวจที่โต๊ะนี้</small>
+      </div>
+
+      <div class="form-group-cyber">
+        <label>โหมดการทำงานของระบบ (OPERATION MODE):</label>
+        <select id="settingSimulationMode" onchange="toggleSimulationMode(this.value)">
+          <option value="true" selected>โหมดจำลองเสมือนจริง (Virtual Simulation Mode - ไม่ต้องต่ออุปกรณ์จริง)</option>
+          <option value="false">โหมดฮาร์ดแวร์จริงหน้างาน (Physical Hardware Mode - RS485 & Camera)</option>
+        </select>
+      </div>
+
+      <div class="form-group-cyber">
+        <label>พอร์ตเชื่อมต่อบอร์ดรีเลย์ USB-to-RS485 (MODBUS RTU):</label>
+        <input type="text" id="settingSerialPort" value="COM3" placeholder="COM3">
+      </div>
+
+      <div class="form-group-cyber">
+        <label>ระยะเวลาหน่วงป้องกันภาพเบลอ POKA-YOKE MOTION BLUR (วินาที):</label>
+        <input type="number" id="settingDelaySec" value="2.0" step="0.5" min="0.5" max="5.0">
+      </div>
+
+      <div class="form-group-cyber">
+        <label>ระยะเวลาเปิดไฟเขียวค้างหลังตรวจสอบผ่าน (วินาที):</label>
+        <input type="number" id="settingHoldSec" value="3.0" step="0.5" min="1.0" max="10.0">
+      </div>
+
+      <div class="form-group-cyber">
+        <label>MQTT BROKER ADDRESS (สำหรับรับส่งข้อมูล CIRA CORE):</label>
+        <input type="text" id="settingMqttHost" value="localhost:1883" placeholder="localhost:1883">
+      </div>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button class="btn-cyan-scan" type="button" onclick="testRelayChannels()" style="padding: 10px 18px; font-size: 13px; font-weight: 700;">
+          ⚡ ทดสอบส่งคำสั่ง Modbus Relay (Ch1-Ch4)
+        </button>
+        <button class="nav-util-btn" type="button" onclick="saveSettingsForm()" style="padding: 10px 22px; font-size: 13px; font-weight: 800; background: #0284c7; color: #ffffff; border-color: #0284c7;">
+          💾 บันทึกการตั้งค่า
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Notification Drawer (Slide-in) -->
+  <div id="notifyDrawer" class="notify-drawer-overlay" onclick="toggleNotifyDrawer()">
+    <div class="notify-drawer-panel" onclick="event.stopPropagation()">
+      <div class="notify-drawer-header">
+        <div style="font-size: 15px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+          <svg style="width: 16px; height: 16px; fill: #f87171;" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span>ศูนย์แจ้งเตือนระบบ (System Notifications)</span>
+        </div>
+        <button class="nav-util-btn" onclick="toggleNotifyDrawer()" style="padding: 2px 8px; font-size: 12px;">✕ ปิด</button>
+      </div>
+      <div class="notify-event-list" id="notifyEventList">
+        <div class="notify-event-card alarm">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #f87171;">
+            <span>ตรวจพบชิ้นงานผิดพลาด (NG)</span>
+            <span style="font-family: var(--font-mono); color: var(--text-muted);">14:30:15</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary);">กล่อง BX-003: ตรวจพบเทปปิดทับ/ใส่กลับด้าน ระบบส่งสัญญาณเสียงเตือน 24V Buzzer</div>
+        </div>
+        <div class="notify-event-card bypass">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #fbbf24;">
+            <span>อนุมัติข้ามกล่อง (Leader Bypass)</span>
+            <span style="font-family: var(--font-mono); color: var(--text-muted);">14:28:40</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary);">หลีดเดอร์ LEADER-01 ยืนยันสิทธิ์เปลี่ยนผลตรวจกล่อง BX-002 เป็น G ตาม Flowchart</div>
+        </div>
+        <div class="notify-event-card">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #34d399;">
+            <span>เริ่มต้นล็อตการผลิตใหม่</span>
+            <span style="font-family: var(--font-mono); color: var(--text-muted);">14:00:00</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary);">ล็อต LOT-20261019-02 เริ่มการผลิตโดยผู้ปฏิบัติงาน MTL80343 เป้าหมาย 20 กล่อง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 1: ป๊อปอัป "ล็อตใหม่" (ตรงตามรูปภาพจริง 1) -->
+  <div id="modalPreLotSetup" class="modal-overlay">
+    <div class="qvs-modal-container">
+      <!-- QVS Red Header Bar -->
+      <div class="qvs-header-bar">
+        <div class="qvs-header-title">Quality Verification System</div>
+        <div class="qvs-header-clock">
+          <div class="qvs-clock-date" id="qvsDateDisplay1">-- -------- ----</div>
+          <div class="qvs-clock-time" id="qvsTimeDisplay1">--:--:--</div>
+        </div>
+      </div>
+
+      <!-- QVS Card Center -->
+      <div class="qvs-body-panel">
+        <div class="qvs-center-box" style="max-width: 530px; width: 100%;">
+          <div class="qvs-title-banner" id="preLotTitleBanner">ตั้งค่าเริ่มต้นล็อตการผลิต</div>
+
+          <!-- Mode Switcher: New Lot vs Join Active Lot -->
+          <div style="display: flex; gap: 8px; margin: 12px 0 16px 0; width: 100%; border-radius: 8px; background: rgba(0,0,0,0.3); padding: 4px; box-sizing: border-box;">
+            <button type="button" id="btnModeNewLot" class="qvs-prelot-tab active" onclick="switchPreLotMode('new')" style="flex: 1; padding: 10px 8px; font-weight: 700; font-size: 13px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; background: #e11d48; color: #ffffff; transition: all 0.2s;">
+              <span>➕ เปิดล็อตใหม่ (New Lot)</span>
+            </button>
+            <button type="button" id="btnModeJoinLot" class="qvs-prelot-tab" onclick="switchPreLotMode('join')" style="flex: 1; padding: 10px 8px; font-weight: 700; font-size: 13px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; background: transparent; color: #94a3b8; transition: all 0.2s;">
+              <span>🤝 เข้าร่วมล็อตโต๊ะอื่น (Join Lot)</span>
+            </button>
+          </div>
+          
+          <!-- Section 1: New Lot Mode -->
+          <div id="sectionNewLotMode">
+            <div class="qvs-form-row">
+              <span class="qvs-form-label">หมายเลขล็อต</span>
+              <input type="text" id="preLotNumber" class="qvs-input-yellow" value="212TEST00W" placeholder="เช่น 212TEST00W" onkeydown="if(event.key===\'Enter\') submitPreLotToRegScreen()" onchange="handlePreLotNumberChange(this.value)">
+            </div>
+
+            <div class="qvs-form-row">
+              <span class="qvs-form-label">รหัสพนักงาน</span>
+              <input type="text" id="preOperatorId" class="qvs-input-yellow" value="91207" placeholder="เช่น 91207" oninput="handleOperatorIdChange(this.value)" onkeydown="if(event.key===\'Enter\') submitPreLotToRegScreen()">
+            </div>
+
+            <div class="qvs-form-row">
+              <span class="qvs-form-label">ชื่อพนักงาน</span>
+              <input type="text" id="preOperatorName" class="qvs-input-yellow" value="SUTHEE RACHANAKUL" placeholder="ชื่อพนักงาน">
+            </div>
+
+            <div class="qvs-form-row" style="margin-bottom: 22px;">
+              <span class="qvs-form-label">โต๊ะตรวจประจำเครื่อง</span>
+              <input type="text" id="preTableNo" class="qvs-input-yellow" value="Offline07" placeholder="เช่น Offline07" oninput="handleStationTableChange(this.value)">
+            </div>
+
+            <div class="qvs-actions-row">
+              <button class="qvs-btn-red" type="button" onclick="clearPreLotInputs()">ล้างข้อมูล</button>
+              <button class="qvs-btn-green" type="button" onclick="submitPreLotToRegScreen()">ตกลง (เปิดล็อตใหม่)</button>
+            </div>
+          </div>
+
+          <!-- Section 2: Join Active Lot Mode -->
+          <div id="sectionJoinLotMode" style="display: none;">
+            <div style="background: rgba(56, 189, 248, 0.08); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 8px; padding: 12px; margin-bottom: 16px; text-align: left;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 700; font-size: 13px; color: #38bdf8;">📋 เลือกล็อตที่กำลังผลิตอยู่:</span>
+                <button type="button" onclick="fetchAndRenderActiveLots()" style="background: transparent; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 4px; padding: 3px 10px; font-size: 11px; cursor: pointer; font-weight: 700;">🔄 รีเฟรช</button>
+              </div>
+              <select id="activeLotSelect" class="qvs-input-yellow" style="width: 100%; margin-bottom: 10px; font-size: 13px; padding: 8px;" onchange="handleActiveLotSelected(this.value)">
+                <option value="">-- กำลังค้นหาล็อตที่กำลังทำอยู่... --</option>
+              </select>
+              <div id="activeLotDetailsPreview" style="font-size: 12px; color: #cbd5e1; line-height: 1.6; display: none; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <div class="qvs-form-row">
+              <span class="qvs-form-label">รหัสพนักงานของคุณ</span>
+              <input type="text" id="joinOperatorId" class="qvs-input-yellow" value="91207" placeholder="เช่น 91207" oninput="handleJoinOperatorIdChange(this.value)">
+            </div>
+
+            <div class="qvs-form-row">
+              <span class="qvs-form-label">ชื่อพนักงานของคุณ</span>
+              <input type="text" id="joinOperatorName" class="qvs-input-yellow" value="SUTHEE RACHANAKUL" placeholder="ชื่อพนักงาน">
+            </div>
+
+            <div class="qvs-form-row" style="margin-bottom: 22px;">
+              <span class="qvs-form-label">โต๊ะตรวจของคุณ (Table)</span>
+              <input type="text" id="joinTableNo" class="qvs-input-yellow" value="Offline08" placeholder="เช่น Offline08" oninput="handleStationTableChange(this.value)">
+            </div>
+
+            <div class="qvs-actions-row">
+              <button class="qvs-btn-red" type="button" onclick="switchPreLotMode('new')">ยกเลิก</button>
+              <button class="qvs-btn-green" type="button" id="btnConfirmJoinLot" onclick="confirmJoinSelectedLot()" style="background: #0284c7; border-color: #38bdf8;" disabled>🤝 เข้าร่วมช่วยตรวจล็อตนี้</button>
+            </div>
+          </div>
+          <div style="margin-top: 14px; text-align: center; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="nav-util-btn" onclick="openLotHistoryFromModal()" style="padding: 7px 14px; background: rgba(56, 189, 248, 0.15); border: 1.5px solid #38bdf8; color: #38bdf8; font-weight: 700; border-radius: 6px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;" title="เปิดดูประวัติการผลิตทุกล็อต">
+              <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+              <span>📋 ประวัติล็อต</span>
+            </button>
+            <button type="button" class="nav-util-btn" onclick="clearSystemDatabase()" style="padding: 7px 14px; background: rgba(239, 68, 68, 0.15); border: 1.5px solid #ef4444; color: #f87171; font-weight: 700; border-radius: 6px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;" title="ล้างฐานข้อมูลการผลิตทั้งหมดและรีเซ็ตระบบ">
+              🗑️ <span>ล้างฐานข้อมูลทั้งหมด (Reset DB)</span>
+            </button>
+          </div>
+          <div class="qvs-version-tag">Version 2.1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: หน้าต่าง "Quality Verification System - ข้อมูลล็อต" (ตรงตามรูปภาพจริง 2 & 3) -->
+  <div id="modalLotRegistration" class="modal-overlay">
+    <div class="qvs-fullscreen-container">
+      <!-- QVS Red Header Bar -->
+      <div class="qvs-header-bar" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="qvs-header-title">Quality Verification System</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="nav-util-btn" onclick="openLotHistoryFromModal()" style="font-size: 11px; padding: 4px 10px; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff; font-weight: 700; border-radius: 4px;" title="เปิดดูประวัติการผลิตทุกล็อต">
+            📋 ดูประวัติล็อต
+          </button>
+          <div class="qvs-header-clock">
+            <div class="qvs-clock-date" id="qvsDateDisplay2">-- -------- ----</div>
+            <div class="qvs-clock-time" id="qvsTimeDisplay2">--:--:--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carryover Banner Alert -->
+      <div id="qvsCarryoverBanner" class="qvs-carryover-banner" style="display: none !important; margin: 10px 18px 0 18px; padding: 10px 14px; background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; border-radius: 6px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">📦</span>
+          <div>
+            <span style="color: #f59e0b; font-weight: 700; font-size: 13px;">งานเศษเหลือยกยอดจากล็อตก่อนหน้า:</span>
+            <span id="qvsCarryoverDetail" style="color: #fef3c7; font-size: 13px; margin-left: 6px;">กล่อง <strong id="qvsCarryoverBox">A</strong> จำนวนเหลือ <strong id="qvsCarryoverQty">100</strong> ชิ้น (ถูกนำมาตั้งต้นเป็นกล่องแรกของล็อตนี้)</span>
+          </div>
+        </div>
+        <span style="font-size: 11px; font-weight: 700; background: #f59e0b; color: #1e293b; padding: 2px 8px; border-radius: 4px;">เศษยกยอด</span>
+      </div>
+
+      <!-- 2-Column Content Layout -->
+      <div class="qvs-content-layout">
+        <!-- Left Column: ข้อมูลล็อต + ตารางลงทะเบียนกล่อง -->
+        <div class="qvs-left-col">
+          <!-- ข้อมูลล็อต Card -->
+          <div class="qvs-panel-blue">
+            <div id="regMultiStationBanner" style="display: none; background: rgba(56, 189, 248, 0.2); border: 1.5px solid #38bdf8; border-radius: 6px; padding: 7px 12px; margin-bottom: 10px; font-size: 12px; color: #38bdf8; font-weight: 700; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">👥</span>
+                <span>ทำงานร่วมกันหลายโต๊ะ (Multi-Station Active)</span>
+              </div>
+              <span id="regMultiStationDetail" style="font-size: 11px; color: #f1f5f9; background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 4px;">ซิงก์ข้อมูลกับโต๊ะอื่นแบบ Real-Time 🔄</span>
+            </div>
+            <div class="qvs-panel-header-center">ข้อมูลล็อต</div>
+            <div class="qvs-grid-2col">
+              <div class="qvs-param-group">
+                <span class="qvs-param-label">Inspection No.</span>
+                <input type="text" id="regInspectionNo" class="qvs-param-input" value="TEST21200">
+              </div>
+              <div class="qvs-param-group">
+                <span class="qvs-param-label">วันที่เข้าสู่ระบบ</span>
+                <div class="qvs-param-display" id="regLoginDate">--/--/----</div>
+              </div>
+              <div class="qvs-param-group">
+                <span class="qvs-param-label">Lot No.</span>
+                <div class="qvs-param-display" id="regLotNoDisplay">212TEST00W</div>
+              </div>
+              <div class="qvs-param-group">
+                <span class="qvs-param-label">เวลาเข้าสู่ระบบ</span>
+                <div class="qvs-param-display" id="regLoginTime">--:--:--</div>
+              </div>
+              <div class="qvs-param-group">
+                <span class="qvs-param-label">Part Name</span>
+                <input type="text" id="regPartName" class="qvs-param-input" value="E2E35A222MA387012F+M01/B">
+              </div>
+              <div class="qvs-param-group">
+                <span class="qvs-param-label">หมายเลขโต๊ะ</span>
+                <input type="text" id="regTableNo" class="qvs-param-input" value="Offline07">
+              </div>
+            </div>
+          </div>
+
+          <!-- ตารางลงทะเบียนกล่อง (Table) -->
+          <div class="qvs-table-wrapper">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 2px 4px;">
+              <span id="lotRegTableTitle" style="font-size: 12px; font-weight: 700; color: #cbd5e1;">ตารางลงทะเบียนกล่อง</span>
+              <div style="display: flex; gap: 6px;">
+                <button id="btnClearRegBoxes" type="button" onclick="clearAllRegisteredBoxes()" class="nav-util-btn" style="font-size: 11px; padding: 2px 8px; color: #f87171; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1);" title="ล้างกล่องที่สแกนทั้งหมดในตาราง">
+                  🗑️ ล้างรายการกล่อง
+                </button>
+                <button type="button" onclick="clearSystemDatabase()" class="nav-util-btn" style="font-size: 11px; padding: 2px 8px; color: #fca5a5; border-color: #ef4444; background: rgba(239, 68, 68, 0.2);" title="ล้างฐานข้อมูลระบบทั้งหมดเพื่อเริ่มใหม่">
+                  ⚠️ ล้างฐานข้อมูลทั้งหมด
+                </button>
+              </div>
+            </div>
+            <table class="qvs-data-table">
+              <thead id="lotRegTableHead">
+                <tr>
+                  <th style="width: 12%; text-align: center;">Ins No.</th>
+                  <th style="width: 36%;">Box No.</th>
+                  <th style="width: 22%;">เวลาลงทะเบียน</th>
+                  <th style="width: 20%;">ผู้ลงทะเบียน</th>
+                  <th style="width: 10%; text-align: center;">ลบ</th>
+                </tr>
+              </thead>
+              <tbody id="lotRegTableBody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Column: ข้อมูลพนักงาน, สเปกงาน, สแกนกล่อง, ปุ่มตกลง -->
+        <div class="qvs-right-col">
+          <!-- ==================== STAGE 1: ลงทะเบียนกล่องก่อนเริ่มตรวจ ==================== -->
+          <div id="qvsRightColStage1" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Card: Operator -->
+            <div class="qvs-card-white">
+              <div class="qvs-user-row">
+                <span class="qvs-user-label">ชื่อพนักงาน</span>
+                <div class="qvs-user-box" id="regOperatorNameDisplay">Sitthichok Suriyawong</div>
+              </div>
+              <div class="qvs-user-row" style="margin-top: 6px;">
+                <span class="qvs-user-label">รหัสพนักงาน</span>
+                <div class="qvs-user-box" id="regOperatorIdDisplay">MTL80343</div>
+              </div>
+              <button class="qvs-btn-orange" type="button" onclick="logoutFromRegScreen()">ออกจากระบบ</button>
+            </div>
+
+            <!-- Card: Job Quantities & Format -->
+            <div class="qvs-card-blue" style="box-sizing: border-box; overflow: hidden; width: 100%;">
+              <div class="qvs-user-row">
+                <span class="qvs-user-label" style="font-size: 11px;">จำนวนงานทั้งหมด</span>
+                <input type="number" id="regTotalWorkQty" class="qvs-input-yellow-num" value="2000" oninput="calculateRegBoxes()">
+              </div>
+              <div class="qvs-user-row" style="margin-top: 6px;">
+                <span class="qvs-user-label" style="font-size: 11px;">จำนวนงานต่อกล่อง</span>
+                <input type="number" id="regQtyPerBox" class="qvs-input-gray-num" value="700" oninput="calculateRegBoxes()">
+              </div>
+              <div class="qvs-user-row" style="margin-top: 6px;">
+                <span class="qvs-user-label" style="font-size: 11px;">รูปแบบงาน</span>
+                <select id="regJobFormat" class="qvs-select-yellow">
+                  <option value="เล็ก">เล็ก</option>
+                  <option value="กลาง" selected>กลาง</option>
+                  <option value="ใหญ่">ใหญ่</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Card: Scan Box -->
+            <div class="qvs-card-white" style="text-align: center;">
+              <div class="qvs-section-title">สแกนกล่อง</div>
+              <input type="text" id="regScanBoxInput" class="qvs-input-scan-yellow" placeholder="ยิงบาร์โค้ดกล่อง . . ." onkeydown="handleRegBoxScan(event)">
+              <div style="font-size: 10px; color: #94a3b8; margin-top: 5px;">(ยิงสแกนเนอร์หรือพิมพ์บาร์โค้ดแล้วกด Enter)</div>
+            </div>
+
+            <!-- Card: Total Boxes -->
+            <div class="qvs-card-white" style="text-align: center;">
+              <div class="qvs-section-title">จำนวนกล่อง</div>
+              <div class="qvs-boxes-count-box" id="regTotalBoxesCount">3</div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="qvs-actions-bottom">
+              <button class="qvs-btn-gray-reset" type="button" onclick="resetAllRegData()" title="รีเซ็ตกล่องและข้อมูลทั้งหมดกลับเป็นค่าเริ่มต้น">
+                <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                <span>รีเซ็ตข้อมูลทั้งหมด</span>
+              </button>
+              <button class="qvs-btn-red" type="button" onclick="cancelRegScreen()">ยกเลิก</button>
+              <button id="btnProceedToInspection" class="qvs-btn-green" type="button" onclick="proceedToStage2()">ถัดไป ➔</button>
+            </div>
+            <div class="qvs-version-tag">Version 2.1</div>
+          </div>
+
+          <!-- ==================== STAGE 2: หน้าสแกนตรวจกล่องงาน (Inspection Mode) ==================== -->
+          <div id="qvsRightColStage2" style="display: none; flex-direction: column; gap: 10px;">
+            <!-- Card: Operator -->
+            <div class="qvs-card-white">
+              <div class="qvs-user-row">
+                <span class="qvs-user-label">ชื่อพนักงาน</span>
+                <div class="qvs-user-box" id="stage2OpNameDisplay">Sitthichok Suriyawong</div>
+              </div>
+              <div class="qvs-user-row" style="margin-top: 6px;">
+                <span class="qvs-user-label">รหัสพนักงาน</span>
+                <div class="qvs-user-box" id="stage2OpIdDisplay">MTL80343</div>
+              </div>
+              <button class="qvs-btn-orange" type="button" onclick="logoutFromRegScreen()">ออกจากระบบ</button>
+            </div>
+
+                        <!-- Card: Poka-Yoke Dummy Test (บังคับทดสอบ NG ก่อน แล้ว Good) -->
+            <div id="stage2DummyCard" class="qvs-card-white" style="border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.06); text-align: center; padding: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                  ทดสอบระบบ (DUMMY TEST)
+                </span>
+                <span id="stage2DummyBadge" style="font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: #ef4444; color: #fff;">
+                  รอดำเนินการ
+                </span>
+              </div>
+              <div id="stage2DummyHint" style="font-size: 10px; color: #94a3b8; margin-bottom: 8px; text-align: left; line-height: 1.3;">
+                ⚠️ บังคับทดสอบตัวอย่าง <strong>NG ก่อน</strong> แล้วตามด้วย <strong>Good</strong> ก่อนสแกนกล่อง
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" id="btnStage2DummyNG" class="nav-util-btn" onclick="runStage2Dummy('NG_SAMPLE')" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: 800; background: #ef4444; color: #fff; border: 1.5px solid #dc2626; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);">
+                  <span id="iconDummyNG">1️⃣</span> เทสตัวอย่าง NG
+                </button>
+                <button type="button" id="btnStage2DummyGood" class="nav-util-btn" onclick="runStage2Dummy('GOOD_SAMPLE')" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: 800; background: #334155; color: #64748b; border: 1.5px solid #475569; border-radius: 5px; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 4px;" disabled>
+                  <span id="iconDummyGood">2️⃣</span> เทสตัวอย่าง Good
+                </button>
+              </div>
+            </div>
+
+            <!-- Card: Scan Box for AI Inspection -->
+            <div class="qvs-card-white" style="text-align: center;">
+              <div class="qvs-section-title">สแกนกล่อง</div>
+              <input type="text" id="stage2ScanBoxInput" class="qvs-input-scan-yellow" placeholder="ยิงบาร์โค้ดกล่อง..." onkeydown="handleStage2Scan(event)">
+              <div style="font-size: 10px; color: #94a3b8; margin-top: 5px;">(ยิงสแกนเนอร์เพื่อเปิดหน้ากล้องตรวจจับ AI)</div>
+            </div>
+
+            <!-- Card: Good / Defect / Reject / Total Boxes Stats -->
+            <div class="qvs-card-blue">
+              <div class="qvs-user-row" style="margin-bottom: 8px;">
+                <span class="qvs-user-label" style="font-size: 11px; color: #34d399; font-weight: 800;">จำนวนงานดี</span>
+                <div id="stage2GoodQtyDisplay" class="qvs-user-box" style="flex: 1; font-size: 16px; font-weight: 800; text-align: center; background: #10b981; color: #ffffff; border: 1.5px solid #34d399; box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);">
+                  2000
+                </div>
+              </div>
+              <div class="qvs-user-row">
+                <span class="qvs-user-label" style="font-size: 11px;">จำนวนงานเสีย</span>
+                <input type="number" id="stage2DefectQty" class="qvs-input-yellow-num" value="0" min="0" placeholder="0" style="text-align: center; flex: 1; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box;" oninput="calculateStage2GoodQty()">
+              </div>
+              <div class="qvs-user-row" style="margin-top: 8px;">
+                <span class="qvs-user-label" style="font-size: 11px;">จำนวนงานรีเจค</span>
+                <input type="number" id="stage2RejectQty" class="qvs-input-yellow-num" value="0" min="0" placeholder="0" style="text-align: center; flex: 1; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box;">
+              </div>
+              <div class="qvs-user-row" style="margin-top: 8px; align-items: stretch;">
+                <span class="qvs-user-label" style="font-size: 11px; align-self: center;">จำนวนกล่องทั้งหมด</span>
+                <div class="qvs-boxes-count-box" id="stage2TotalBoxes" style="flex: 1; font-size: 20px; font-weight: 800; text-align: center; background: #e2e8f0; color: #0f172a;">0</div>
+              </div>
+            </div>
+
+            <!-- Leftover Notice for this lot -->
+            <div id="stage2LeftoverNotice" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; border-radius: 6px; padding: 6px 10px; font-size: 11px; color: #fbbf24; text-align: center; line-height: 1.4;">
+            </div>
+
+            <!-- Actions: ปิดล๊อต & ย้อนกลับ -->
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+              <button id="stage2BtnCloseLot" class="qvs-btn-orange" style="width: 100%; font-size: 15px; font-weight: 800; padding: 10px;" type="button" onclick="openLotCloseModal()">
+                ปิดล๊อต
+              </button>
+              <button class="qvs-btn-yellow-back" style="width: 100%; font-size: 15px; font-weight: 800; padding: 9px;" type="button" onclick="backToStage1()">
+                ย้อนกลับ
+              </button>
+            </div>
+            <div class="qvs-version-tag">Version 3.1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LEADER BYPASS & NG VERIFICATION -->
+  <div id="modalBypass" class="modal-overlay" style="z-index: 2000;">
+    <div class="cyber-modal-card" style="border: 2px solid #ef4444; max-width: 580px; width: 95%; box-shadow: 0 0 35px rgba(239, 68, 68, 0.45); background: #0b1329;">
+      
+      <!-- Header with pulsing NG alert -->
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px;">
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 20px; font-weight: 800; animation: pulse-alarm 1.2s infinite; flex-shrink: 0;">
+          ⚠️
+        </div>
+        <div>
+          <div style="font-size: 16px; font-weight: 800; color: #f87171; letter-spacing: 0.5px;">
+            ระบบตรวจพบงาน NG (Alarm Active)
+          </div>
+          <div style="font-size: 12px; color: #94a3b8;">
+            กรุณาให้หัวหน้างาน (Leader / Supervisor) ตรวจสอบชิ้นงานจริงและยืนยันสิทธิ์
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box: Inspected Box & Defect Info -->
+      <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.6;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div><span style="color: #94a3b8;">กล่องที่ตรวจพบ:</span> <strong id="bypassBoxBarcodeDisplay" style="color: #38bdf8; font-family: var(--font-mono); font-size: 14px;">-</strong></div>
+          <div><span style="color: #94a3b8;">ผลตรวจจาก AI:</span> <strong style="color: #ef4444; font-size: 14px; font-weight: 800;">NG (ไม่ผ่าน)</strong></div>
+          <div><span style="color: #94a3b8;">ประเภทข้อบกพร่อง:</span> <span id="bypassDefectTypeDisplay" style="color: #fbbf24; font-weight: 700;">TAPE_COVERED</span></div>
+          <div><span style="color: #94a3b8;">ความแม่นยำ AI:</span> <span id="bypassConfidenceDisplay" style="color: #cbd5e1; font-family: var(--font-mono);">99.2%</span></div>
+        </div>
+      </div>
+
+      <!-- Leader Authentication -->
+      <div class="form-group-cyber" style="margin-bottom: 14px;">
+        <label style="font-size: 13px; font-weight: 700; color: #f8fafc; display: flex; justify-content: space-between;">
+          <span>รหัสพนักงานหัวหน้างาน (Leader ID): <span style="color: #f87171;">*</span></span>
+          <span style="font-size: 11px; color: #94a3b8;">(เช่น LEADER-01 หรือรหัสหัวหน้างาน)</span>
+        </label>
+        <input type="text" id="bypassLeaderId" class="qvs-input-scan-yellow" placeholder="สแกนหรือพิมพ์รหัสหัวหน้างาน..." style="font-size: 14px; height: 38px; text-align: left; padding-left: 12px;" autofocus>
+      </div>
+
+      <!-- Case 1 & Case 2 Selection Container -->
+      <div style="font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px;">
+        เลือกสรุปผลการตรวจสอบชิ้นงานจริง (2 กรณี):
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+        
+        <!-- CASE 1: เป็นงานดี แต่ขึ้น NG (G) -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 8px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-weight: 800; color: #34d399; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+              <span>🟢 กรณีที่ 1: เป็นงานดี แต่ขึ้น NG (False NG)</span>
+            </div>
+            <span style="font-size: 11px; background: rgba(16, 185, 129, 0.2); color: #6ee7b7; padding: 2px 8px; border-radius: 4px; font-weight: 700;">สรุปผลเป็น G</span>
+          </div>
+          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">ระบุเหตุผลที่อนุมัติเป็นงานดี:</div>
+          <select id="bypassReasonG" style="width: 100%; background: #0f172a; border: 1px solid rgba(16, 185, 129, 0.4); color: #f8fafc; padding: 7px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px;">
+            <option value="งานประกอบถูกต้อง AI ตรวจจับผิดพลาดจากแสงเงา (False NG)">งานประกอบถูกต้อง AI ตรวจจับผิดพลาดจากแสงเงา (False NG / Overkill)</option>
+            <option value="พนักงานแก้ไขการจัดเรียงชิ้นงานถูกต้องแล้ว">พนักงานแก้ไขการจัดเรียงชิ้นงานถูกต้องแล้ว</option>
+            <option value="ได้รับอนุมัติกรณีพิเศษจากฝ่ายคุณภาพ (QA Special Approval)">ได้รับอนุมัติกรณีพิเศษจากฝ่ายคุณภาพ (QA Special Approval)</option>
+          </select>
+          <button type="button" onclick="submitLeaderDecision('G')" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: 1px solid #34d399; border-radius: 6px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">
+            <span>✔ ยืนยันสรุปงานนี้เป็น [ G ] (งานดี บันทึกลงตาราง)</span>
+          </button>
+        </div>
+
+        <!-- CASE 2: เป็นงานเสียจริงๆ (NG) -->
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.45); border-radius: 8px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-weight: 800; color: #f87171; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+              <span>🔴 กรณีที่ 2: งานเสียจริงๆ (Confirmed NG)</span>
+            </div>
+            <span style="font-size: 11px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 2px 8px; border-radius: 4px; font-weight: 700;">สรุปผลเป็น NG</span>
+          </div>
+          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">ระบุสาเหตุที่ยืนยันงานเสีย:</div>
+          <select id="bypassReasonNG" style="width: 100%; background: #0f172a; border: 1px solid rgba(239, 68, 68, 0.4); color: #f8fafc; padding: 7px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px;">
+            <option value="ตรวจพบเทปปิดทับ / ชิ้นงานเอียงผิดตำแหน่งจริง">ตรวจพบเทปปิดทับ / ชิ้นงานเอียงผิดตำแหน่งจริง</option>
+            <option value="ชิ้นงานชำรุด / มีตำหนิ / ตกหล่น">ชิ้นงานชำรุด / มีตำหนิ / ตกหล่น</option>
+            <option value="ไม่ผ่านเกณฑ์การตรวจสอบคุณภาพ (Reject Piece)">ไม่ผ่านเกณฑ์การตรวจสอบคุณภาพ (Reject Piece)</option>
+          </select>
+          <button type="button" onclick="submitLeaderDecision('NG')" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #ffffff; border: 1px solid #f87171; border-radius: 6px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+            <span>✖ ยืนยันสรุปงานนี้เป็น [ NG ] (งานเสีย บันทึกลงตาราง)</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Cancel / Close button -->
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="nav-util-btn" type="button" onclick="closeModal('modalBypass')" style="padding: 8px 18px; font-size: 12px;">
+          ปิดหน้าต่าง (รอดำเนินการต่อ)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: LOT CLOSE SUMMARY -->
+  <div id="modalLotClose" class="modal-overlay">
+    <div class="cyber-modal-card">
+      <div style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">
+        สรุปผลการผลิตและปิดล็อตงาน
+      </div>
+      <div id="lotCloseSummaryContent" style="font-size: 13px; line-height: 1.8; margin-bottom: 18px; background: var(--bg-card-sub); padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+        <!-- Filled by JS -->
+      </div>
+      <div id="lotCloseActions" style="display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 15px;">
+        <button id="btnPauseBetweenLot" type="button" onclick="confirmPauseLot()" style="padding: 12px 20px; font-weight: 700; font-size: 14px; background: #22c55e; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> จบระหว่างล็อต
+        </button>
+        <button id="btnCloseFullLot" type="button" onclick="confirmCloseLot('COMPLETED')" style="padding: 12px 20px; font-weight: 700; font-size: 14px; background: #f87171; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(248, 113, 113, 0.4);">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg> จบล็อต
+        </button>
+        <button type="button" class="nav-util-btn" onclick="closeModal('modalLotClose')" style="padding: 12px 18px; font-size: 13px;">
+          ยกเลิก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- MODAL: SUPABASE LEGACY 16-COLUMNS HISTORY -->
+  <div id="modalLegacyHistory" class="modal-overlay" onclick="closeModal('modalLegacyHistory')">
+    <div class="cyber-modal-card" style="max-width: 95vw; width: 1400px; padding: 18px;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 18px;">☁️</span>
+            <h3 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 0;">
+              ประวัติการตรวจสอบตามโครงสร้างเดิม 16 คอลัมน์ (Supabase v_legacy_inspection_history)
+            </h3>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0 0;">
+            ตารางแสดงผลธุรกรรมรายกล่อง (รวมดัมมี่ SENSOR) เชื่อมโยงตรงกับ Supabase PostgreSQL Cloud
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn-cyan-scan" onclick="exportLegacyHistoryCSV()" style="padding: 7px 14px; background: #059669;">
+            <span>📥 Export CSV (16 คอลัมน์เดิม)</span>
+          </button>
+          <button class="nav-util-btn" onclick="triggerManualSupabaseSync()" style="padding: 7px 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-weight: 700;">
+            <span>🔄 รีเฟรช / ซิงค์ใหม่</span>
+          </button>
+          <button class="nav-util-btn" onclick="closeModal('modalLegacyHistory')" style="padding: 7px 14px;">✕ ปิด</button>
+        </div>
+      </div>
+
+      <div class="table-responsive-box" style="max-height: 68vh; overflow-y: auto;">
+        <table class="cyber-table" style="font-size: 11.5px;">
+          <thead>
+            <tr style="white-space: nowrap;">
+              <th>InsNo</th>
+              <th>LotNo</th>
+              <th>BoxNo</th>
+              <th>TableNo</th>
+              <th style="text-align: center;">CheckResult</th>
+              <th>CheckTime</th>
+              <th>Checker</th>
+              <th>StartTime</th>
+              <th>FinishTime</th>
+              <th>Worktype</th>
+              <th style="text-align: right;">InputTotal</th>
+              <th style="text-align: right;">OutputTotal</th>
+              <th style="text-align: right;">Defect</th>
+              <th style="text-align: right;">Reject</th>
+              <th style="text-align: center;">Status</th>
+              <th style="text-align: right;">Gaptime (นาที)</th>
+            </tr>
+          </thead>
+          <tbody id="legacyHistoryTableBody">
+            <tr><td colspan="16" style="text-align: center; color: var(--text-muted); padding: 24px;">กำลังดึงข้อมูลจาก Supabase Cloud...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EVIDENCE IMAGE PREVIEW (HD Lightbox) -->
+  <div id="modalImagePreview" class="modal-overlay" onclick="closeModal('modalImagePreview')">
+    <div class="cyber-modal-card" style="max-width: 860px; padding: 14px;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span id="previewTitle" style="font-size: 14px; font-weight: 700;">รูปภาพหลักฐานการตรวจสอบ</span>
+        <button class="nav-util-btn" onclick="closeModal('modalImagePreview')" style="padding: 2px 8px; font-size: 11px;">✕ ปิด</button>
+      </div>
+      <div style="width: 100%; max-height: 72vh; background: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-strong);">
+        <img id="previewModalImg" src="" alt="Inspection Evidence" style="max-width: 100%; max-height: 70vh; object-fit: contain; image-rendering: -webkit-optimize-contrast;">
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/virtual_hw.js?v=20261022_qvs_v18"></script>
+  <script src="/static/js/app.js?v=20261027_clean_v3"></script>
+</body>
+</html>
