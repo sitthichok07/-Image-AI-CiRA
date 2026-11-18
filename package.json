@@ -1,0 +1,23 @@
+{
+  "name": "cira-image-ai-workpiece-inspection",
+  "version": "1.0.0",
+  "description": "Murata DX12 CiRA Image AI Workpiece Packing Inspection System",
+  "main": "run_system.py",
+  "scripts": {
+    "start": "py run_system.py",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:start:js": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop cira-inspection-server",
+    "pm2:restart": "pm2 restart cira-inspection-server",
+    "pm2:logs": "pm2 logs cira-inspection-server",
+    "pm2:status": "pm2 status"
+  },
+  "keywords": [
+    "cira",
+    "image-ai",
+    "inspection",
+    "murata-dx12"
+  ],
+  "author": "Murata Electronics (Thailand) - DX12",
+  "license": "ISC"
+}
