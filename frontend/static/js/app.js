@@ -2427,11 +2427,20 @@ function handleStage2Scan(e) {
   closeModal("modalLotRegistration");
   addNotification("เปิดหน้ากล้องตรวจจับ", `สแกนกล่อง: ${barcode} ➔ เปิดหน้ากล้องตรวจจับ G/NG ทันที...`, "info");
 
-  // 3. Trigger camera inspection on backend
+  // 3. Trigger camera inspection on backend with current session operator
+  const curOpId = sessionStorage.getItem("cira_operator_id") || "MTL80343";
+  const curOpName = sessionStorage.getItem("cira_operator_name") || "Operator";
+  const curTable = getStationTableNo() || "Offline07";
+
   fetch("/api/inspection/scan", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ barcode: barcode })
+    body: JSON.stringify({
+      barcode: barcode,
+      operator_id: curOpId,
+      operator_name: curOpName,
+      table_no: curTable
+    })
   })
   .then(res => res.json())
   .then(scanRes => {
