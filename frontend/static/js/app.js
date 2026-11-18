@@ -1158,8 +1158,8 @@ function updateUI(data) {
 
   if (data.state === "RESULT_HOLD") {
     const isGood = data.evaluating_result ? (data.evaluating_result === "G") : (data.last_inspection && data.last_inspection.result === "G");
-    const rem = typeof data.delay_remaining_sec === "number" ? data.delay_remaining_sec : 3.0;
-    const totalHold = 3.0;
+    const rem = typeof data.delay_remaining_sec === "number" ? data.delay_remaining_sec : 2.0;
+    const totalHold = 2.0;
     const pct = Math.max(0, Math.min(100, Math.round((rem / totalHold) * 100)));
 
     if (camCountdownOverlay) {
@@ -1168,8 +1168,8 @@ function updateUI(data) {
     }
     if (camCountdownTitleText) {
       camCountdownTitleText.textContent = isGood 
-        ? "ตรวจผ่าน [G] - กำลังแสดงผลค้างไว้ 3 วินาที" 
-        : "ไม่ผ่าน [NG] - กำลังแสดงผลค้างไว้ 3 วินาที";
+        ? "ตรวจผ่าน [G] - กำลังบันทึกผล (2 วิ)" 
+        : "ไม่ผ่าน [NG] - กำลังบันทึกผล (2 วิ)";
     }
     if (camCountdownSec) {
       camCountdownSec.textContent = rem.toFixed(1);
@@ -1178,11 +1178,11 @@ function updateUI(data) {
       camCountdownBar.style.width = `${pct}%`;
     }
     if (camCountdownSubtext) {
-      camCountdownSubtext.textContent = "⏱ หน่วง 3 วินาที ➔ บันทึกภาพและเก็บข้อมูลลงระบบอัตโนมัติ";
+      camCountdownSubtext.textContent = "⏱ กำลังบันทึกผลและรูปภาพหลักฐานลงระบบอัตโนมัติ";
     }
   } else if (data.state === "DELAY_MOTION") {
-    const rem = typeof data.delay_remaining_sec === "number" ? data.delay_remaining_sec : 2.0;
-    const totalDelay = 2.0;
+    const rem = typeof data.delay_remaining_sec === "number" ? data.delay_remaining_sec : 1.0;
+    const totalDelay = 1.0;
     const pct = Math.max(0, Math.min(100, Math.round((rem / totalDelay) * 100)));
 
     if (camCountdownOverlay) {
@@ -1190,7 +1190,7 @@ function updateUI(data) {
       camCountdownOverlay.className = "cam-countdown-overlay warn";
     }
     if (camCountdownTitleText) {
-      camCountdownTitleText.textContent = "หน่วงเวลา 2 วินาทีเพื่อเช็ค G / NG (ป้องกันภาพสั่น)";
+      camCountdownTitleText.textContent = "หน่วงเวลา 1 วินาทีเพื่อเช็ค G / NG (ป้องกันภาพสั่น)";
     }
     if (camCountdownSec) {
       camCountdownSec.textContent = rem.toFixed(1);
@@ -2145,11 +2145,16 @@ function openLotRegScreen(keepExisting = true, isStage2 = false) {
 
       if (closeBtn) {
         if (targetCount > 0 && doneCount >= targetCount) {
+          closeBtn.classList.remove("qvs-btn-orange");
+          closeBtn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+          closeBtn.style.borderColor = "#047857";
           closeBtn.classList.add("qvs-pulse-orange");
-          closeBtn.innerHTML = `<span>✔ ตรวจครบ ${doneCount}/${targetCount} กล่อง - คลิกเพื่อปิดล๊อต</span>`;
+          closeBtn.innerHTML = `<span>✔ ตรวจครบ ${doneCount}/${targetCount} กล่อง ➔ คลิกปิดล็อตการผลิต</span>`;
         } else {
+          closeBtn.style.background = "linear-gradient(135deg, #f97316 0%, #ea580c 100%)";
+          closeBtn.style.borderColor = "#c2410c";
           closeBtn.classList.remove("qvs-pulse-orange");
-          closeBtn.innerHTML = `<span>ปิดล๊อต</span>`;
+          closeBtn.innerHTML = `<span>⏸️ จบระหว่างล็อต (พักงาน: ตรวจได้ ${doneCount}/${targetCount || '?'})</span>`;
         }
       }
     }, 200);
@@ -2230,17 +2235,22 @@ function updateStage2Stats() {
     }
   }
 
-  // Refresh Close button and scan input placeholder based on real inspected boxes
+  // Refresh Close button based on real inspected boxes vs target count
   const scan2 = document.getElementById("stage2ScanBoxInput");
   const closeBtn = document.getElementById("stage2BtnCloseLot");
   const targetCount = currentRegBoxes.length;
   if (closeBtn) {
     if (targetCount > 0 && totalInspected >= targetCount) {
+      closeBtn.classList.remove("qvs-btn-orange");
+      closeBtn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+      closeBtn.style.borderColor = "#047857";
       closeBtn.classList.add("qvs-pulse-orange");
-      closeBtn.innerHTML = `<span>✔ ตรวจครบ ${totalInspected}/${targetCount} กล่อง - คลิกเพื่อปิดล๊อต</span>`;
+      closeBtn.innerHTML = `<span>✔ ตรวจครบ ${totalInspected}/${targetCount} กล่อง ➔ คลิกปิดล็อตการผลิต</span>`;
     } else {
+      closeBtn.style.background = "linear-gradient(135deg, #f97316 0%, #ea580c 100%)";
+      closeBtn.style.borderColor = "#c2410c";
       closeBtn.classList.remove("qvs-pulse-orange");
-      closeBtn.innerHTML = `<span>ปิดล๊อต</span>`;
+      closeBtn.innerHTML = `<span>⏸️ จบระหว่างล็อต (พักงาน: ตรวจได้ ${totalInspected}/${targetCount || '?'})</span>`;
     }
   }
   if (scan2 && !scan2.dataset.lockedByDummy) {
@@ -2327,11 +2337,7 @@ function proceedToStage2() {
 
     setTimeout(() => {
       const scan2 = document.getElementById("stage2ScanBoxInput");
-      const closeBtn = document.getElementById("stage2BtnCloseLot");
-      if (closeBtn) {
-        closeBtn.classList.remove("qvs-pulse-orange");
-        closeBtn.innerHTML = `<span>ปิดล๊อต</span>`;
-      }
+      updateStage2Stats();
       if (scan2) {
         // Auto-fill with the first registered box barcode!
         const firstBox = currentRegBoxes[0]?.box_no || "";
@@ -2952,14 +2958,16 @@ function openLotCloseModal() {
   `;
   document.getElementById("lotCloseSummaryContent").innerHTML = content;
 
-  // Toggle button display based on isComplete
+  // Toggle button display based on isComplete:
+  // If work is not finished, MUST pause/partial close! Cannot do full close!
   const btnPause = document.getElementById("btnPauseBetweenLot");
   const btnClose = document.getElementById("btnCloseFullLot");
   if (btnPause) {
     btnPause.style.display = isComplete ? "none" : "inline-flex";
   }
   if (btnClose) {
-    btnClose.style.display = "inline-flex";
+    // Only permit full close when all target boxes are completed!
+    btnClose.style.display = isComplete ? "inline-flex" : "none";
   }
 
   const closeMod = document.getElementById("modalLotClose");
@@ -4018,22 +4026,27 @@ async function runStage2Dummy(sampleType) {
     }
     currentLotData.dummy_tested = Boolean(currentLotData.dummy_status.good_passed && currentLotData.dummy_status.ng_passed);
 
-    // 1. Temporarily close modal to reveal Camera Viewport
+    // 1. Show the authentic AI detection image (NG or Good) in the camera viewport immediately!
+    if (liveFeedImg && data.last_inspection && data.last_inspection.image_base64) {
+      liveFeedImg.src = "data:image/jpeg;base64," + data.last_inspection.image_base64;
+    }
+
+    // 2. Temporarily close modal to reveal Camera Viewport
     closeModal("modalLotRegistration");
 
-    // 2. Switch tab to Live Inspection screen
+    // 3. Switch tab to Live Inspection screen
     const liveTab = document.querySelectorAll(".cyber-tab")[0];
     if (liveTab) liveTab.click();
 
-    // 3. Trigger 2.5s Camera Countdown HUD Overlay
+    // 4. Trigger snappy 1.8s Camera Countdown HUD Overlay
     const camOverlay = document.getElementById("camCountdownOverlay");
     const camTitle = document.getElementById("camCountdownTitleText");
     const camSec = document.getElementById("camCountdownSec");
     const camBar = document.getElementById("camCountdownBar");
     const camSub = document.getElementById("camCountdownSubtext");
 
-    let remainingSec = 2.5;
-    const totalDuration = 2.5;
+    let remainingSec = 1.8;
+    const totalDuration = 1.8;
 
     if (camOverlay) {
       camOverlay.style.display = "flex";

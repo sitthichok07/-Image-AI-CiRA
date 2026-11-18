@@ -32,9 +32,9 @@ INSPECTIONS_DIR.mkdir(exist_ok=True)
 SAMPLE_IMAGES_DIR.mkdir(exist_ok=True)
 
 # System Operational Parameters (Poka-Yoke)
-BOX_START_DELAY_SEC = 3.0     # Delay 3s before opening camera feed when lot starts
-MOTION_BLUR_DELAY_SEC = 2.0   # Delay 2s to check G/NG (Poka-Yoke motion blur prevention)
-RESULT_HOLD_TIME_SEC = 3.0    # Hold G/NG result & Tower Lamp for 3s before auto-saving
+BOX_START_DELAY_SEC = 1.5     # Snappy startup delay before opening camera
+MOTION_BLUR_DELAY_SEC = 1.0   # Snappy 1.0s delay to prevent motion blur
+RESULT_HOLD_TIME_SEC = 2.0    # Hold G/NG result for 2.0s before proceeding
 DUMMY_SAMPLE_REQUIRED = True # Bypass Dummy Test requirement
 
 # Server Settings

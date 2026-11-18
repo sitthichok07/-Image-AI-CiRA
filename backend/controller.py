@@ -402,13 +402,10 @@ class InspectionController:
         self.state = "DELAY_MOTION"
         self.broadcast_state()
 
-        # Step 7: Poka-Yoke Delay (2.0s) to prevent motion blur
-        steps = 20
-        step_duration = config.MOTION_BLUR_DELAY_SEC / steps
-        for i in range(steps, 0, -1):
-            self.delay_remaining_sec = round(i * step_duration, 1)
-            self.broadcast_state()
-            await asyncio.sleep(step_duration)
+        # Step 7: Snappy Poka-Yoke Delay (1.0s) to prevent motion blur
+        self.delay_remaining_sec = config.MOTION_BLUR_DELAY_SEC
+        self.broadcast_state()
+        await asyncio.sleep(config.MOTION_BLUR_DELAY_SEC)
 
         self.delay_remaining_sec = 0.0
         self.state = "INSPECTING"

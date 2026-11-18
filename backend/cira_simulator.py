@@ -145,7 +145,7 @@ class CiRASimulator:
                 weights=[0.55, 0.30, 0.10, 0.05]
             )[0]
 
-        # Gather real HD sample images from รูปงาน G / รูปงาน NG
+        # Gather real HD sample images
         real_g_files = self._get_good_sample_files()
         real_ng_files = self._get_ng_sample_files()
 
@@ -155,6 +155,22 @@ class CiRASimulator:
             img = Image.open(random.choice(real_ng_files)).convert("RGB")
         else:
             img = self._create_synthetic_workpiece(is_good=is_good, box_code=box_barcode)
+
+        # Apply distinct AI Detection Bounding Box & Status Badge overlay
+        draw = ImageDraw.Draw(img)
+        w, h = img.size
+        bbox_color = (0, 220, 50) if is_good else (240, 20, 20)
+        label_text = f"{'G PASS' if is_good else 'NG DEFECT'} {confidence:.1f}% ({defect_type})"
+        # Draw outer detection box
+        draw.rectangle([15, 15, w - 15, h - 15], outline=bbox_color, width=6)
+        # Draw top status badge
+        badge_w = min(w - 30, 360)
+        badge_h = 42
+        draw.rectangle([15, 15, 15 + badge_w, 15 + badge_h], fill=bbox_color)
+        draw.text((25, 26), label_text, fill=(255, 255, 255))
+        # Timestamp watermark
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        draw.text((25, h - 35), f"CiRA CORE AI | Sample: {box_barcode} | {ts}", fill=(255, 255, 255))
 
         # Encode to Base64 (JPEG HD lossless-grade)
         buffer = io.BytesIO()
