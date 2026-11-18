@@ -330,8 +330,22 @@ class InspectionController:
         self.broadcast_state()
         return self.get_telemetry()
 
-    async def process_box_barcode(self, barcode: str) -> Dict[str, Any]:
+    async def process_box_barcode(
+        self,
+        barcode: str,
+        operator_id: Optional[str] = None,
+        operator_name: Optional[str] = None,
+        table_no: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Triggered when barcode scanner reads a packaging box."""
+        # 1. Poka-Yoke Lock: Strictly enforce Dummy Test (both NG & Good must pass)!
+        if not (self.dummy_good_passed and self.dummy_ng_passed):
+            self.state = "DUMMY_TEST"
+            self.broadcast_state()
+            return {
+                "error": "⛔ Poka-Yoke Lock: บังคับทดสอบชิ้นงานตัวอย่าง (Dummy Test) ทั้ง NG และ Good ให้ผ่านครบก่อนเริ่มสแกนกล่องงานจริง!"
+            }
+
         lot_summary = db.get_lot_summary(self.lot_number) if self.current_lot else {}
         total_done = lot_summary.get("inspections_total", 0)
         target = self.total_target_boxes
@@ -347,20 +361,16 @@ class InspectionController:
             return {
                 "error": "⛔ งานไม่ผ่าน (NG): ระบบล็อกการทำงาน ต้องให้ LEADER อนุมัติข้ามก่อนเท่านั้น!"
             }
-        if self.state == "DUMMY_TEST":
-            if self.dummy_good_passed and self.dummy_ng_passed:
-                self.state = "READY"
-            else:
-                return {
-                    "error": "⛔ Poka-Yoke Lock: บังคับทดสอบชิ้นงานตัวอย่าง (Dummy Test) ทั้ง NG และ Good ให้ผ่านครบก่อนเริ่มสแกนกล่องงานจริง!"
-                }
         if self.state in ["DELAY_MOTION", "INSPECTING", "RESULT_HOLD"]:
             return {"error": "ระบบกำลังประมวลผลการตรวจสอบ กรุณารอสักครู่"}
-        if self.state != "READY":
-            return {"error": f"ไม่สามารถสแกนกล่องได้ในสถานะ {self.state}"}
 
         barcode = (barcode or "").strip()
         reg_boxes = getattr(self, "registered_boxes", [])
+
+        # Assign per-station / per-operator info
+        active_op_id = operator_id or self.operator_id or "MTL80343"
+        active_op_name = operator_name or self.operator_name or db.lookup_operator_name(active_op_id) or "Operator"
+        active_table = table_no or getattr(self, "table_no", "Offline07")
 
         if barcode:
             known_box = next((b for b in reg_boxes if b.get("box_no", "").strip().upper() == barcode.upper()), None)
@@ -369,7 +379,9 @@ class InspectionController:
                     "ins_no": len(reg_boxes) + 1,
                     "box_no": barcode,
                     "time": datetime.now().strftime("%H:%M:%S"),
-                    "operator": getattr(self, "operator_name", "SUTHEE RACHANAKUL"),
+                    "operator": active_op_name,
+                    "operator_id": active_op_id,
+                    "table_no": active_table,
                     "is_carryover": False,
                     "leftover_qty": None
                 }
@@ -407,16 +419,32 @@ class InspectionController:
 
         # In simulation mode, generate AI inspection automatically
         if config.SIMULATION_MODE:
-            await self._run_simulated_ai_inspection(barcode)
+            await self._run_simulated_ai_inspection(
+                barcode,
+                operator_id=active_op_id,
+                operator_name=active_op_name,
+                table_no=active_table
+            )
 
         return self.get_telemetry()
 
-    async def _run_simulated_ai_inspection(self, barcode: str):
+    async def _run_simulated_ai_inspection(
+        self,
+        barcode: str,
+        operator_id: Optional[str] = None,
+        operator_name: Optional[str] = None,
+        table_no: Optional[str] = None
+    ):
         """Simulates CiRA CORE AI processing."""
         await asyncio.sleep(0.3)  # inference time simulation
         force = "NG" if "NG" in (barcode or "").upper() else "RANDOM"
         sim_data = cira_sim.inspect_sample(box_barcode=barcode, force_result=force)
-        await self.evaluate_inspection_result(sim_data)
+        await self.evaluate_inspection_result(
+            sim_data,
+            operator_id=operator_id,
+            operator_name=operator_name,
+            table_no=table_no
+        )
 
     async def trigger_manual_inspection(self, force_result: Optional[str] = None):
         """Manual trigger button from Web Dashboard."""
@@ -480,7 +508,13 @@ class InspectionController:
         await self.evaluate_inspection_result(sim_data)
         return self.get_telemetry()
 
-    async def evaluate_inspection_result(self, cira_payload: Dict[str, Any]):
+    async def evaluate_inspection_result(
+        self,
+        cira_payload: Dict[str, Any],
+        operator_id: Optional[str] = None,
+        operator_name: Optional[str] = None,
+        table_no: Optional[str] = None
+    ):
         """
         Evaluates CiRA CORE detection result (G or NG).
         Sequence:
@@ -497,6 +531,11 @@ class InspectionController:
         cycle_time_ms = int(cira_payload.get("cycle_time_ms", 2350))
 
         self.evaluating_result = ai_result
+
+        # Identify operator for this specific scan
+        act_op_id = operator_id or self.operator_id or "MTL80343"
+        act_op_name = operator_name or self.operator_name or db.lookup_operator_name(act_op_id) or "Operator"
+        act_table = table_no or getattr(self, "table_no", "Offline07")
 
         # 1. Save inspection photo & record to database immediately so UI has complete record during hold
         img_filename = f"{self.lot_number}_{box_barcode}_{int(time.time())}.jpg"
@@ -516,14 +555,14 @@ class InspectionController:
             lot_number=self.lot_number,
             box_barcode=box_barcode,
             box_index=box_index,
-            operator_id=self.operator_id or "MTL80343",
+            operator_id=act_op_id,
             part_model=self.part_model or "E2E35A222MA387012F+M01/B",
             ai_result=ai_result,
             final_result=ai_result,
             confidence_score=confidence,
             image_path=img_path,
-            table_no=getattr(self, "table_no", "Offline07"),
-            operator_name=getattr(self, "operator_name", "")
+            table_no=act_table,
+            operator_name=act_op_name
         )
 
         # Asynchronously sync inspection & upload image to Supabase Cloud in background
@@ -538,7 +577,7 @@ class InspectionController:
             lot_number=self.lot_number,
             box_barcode=box_barcode,
             box_index=box_index,
-            operator_id=self.operator_id or "MTL80343",
+            operator_id=act_op_id,
             ai_result=ai_result,
             final_result=ai_result,
             confidence_score=confidence,

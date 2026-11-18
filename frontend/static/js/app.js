@@ -809,10 +809,11 @@ function startReturnToStage2Timer() {
 function updateUI(data) {
   currentLotData = data;
 
-  // Header info
-  if (headerOperator) headerOperator.textContent = data.operator_id;
-  const opName = data.operator_name || sessionStorage.getItem("cira_operator_name") || "Aun";
-  if (headerOperatorName) headerOperatorName.textContent = `(${opName})`;
+  // Header info — prioritize current user's local session identity
+  const localOpId = sessionStorage.getItem("cira_operator_id") || data.operator_id || "MTL80343";
+  const localOpName = sessionStorage.getItem("cira_operator_name") || data.operator_name || "Aun";
+  if (headerOperator) headerOperator.textContent = localOpId;
+  if (headerOperatorName) headerOperatorName.textContent = `(${localOpName})`;
   if (headerLot) headerLot.textContent = data.lot_number;
   if (headerModel && data.part_model) {
     const shortModel = data.part_model.split(" ")[0] || data.part_model;
@@ -2083,8 +2084,8 @@ function openLotRegScreen(keepExisting = true, isStage2 = false) {
   const regLotNo = document.getElementById("regLotNoDisplay");
   const regOpName = document.getElementById("regOperatorNameDisplay");
   const regOpId = document.getElementById("regOperatorIdDisplay");
-  const opName = currentLotData?.operator_name || sessionStorage.getItem("cira_operator_name") || "Sitthichok Suriyawong";
-  const opId = currentLotData?.operator_id || sessionStorage.getItem("cira_operator_id") || "MTL80343";
+  const opId = sessionStorage.getItem("cira_operator_id") || currentLotData?.operator_id || "MTL80343";
+  const opName = sessionStorage.getItem("cira_operator_name") || currentLotData?.operator_name || "Sitthichok Suriyawong";
   if (regLotNo && currentLotData?.lot_number) regLotNo.textContent = currentLotData.lot_number;
   if (regOpName) regOpName.textContent = opName;
   if (regOpId) regOpId.textContent = opId;
@@ -2114,20 +2115,14 @@ function openLotRegScreen(keepExisting = true, isStage2 = false) {
     updateStage2Stats();
     calculateStage2GoodQty();
 
-    // Check dummy status: if already tested in DB, keep dummy passed!
+    // Strict Poka-Yoke: Strictly enforce testing Dummy (NG then Good) before real scanning!
+    if (!currentLotData) currentLotData = {};
+    if (!currentLotData.dummy_status) currentLotData.dummy_status = { good_passed: false, ng_passed: false };
     const hasPassedDummy = Boolean(
-      currentLotData?.dummy_tested ||
-      (currentLotData?.dummy_status?.good_passed && currentLotData?.dummy_status?.ng_passed)
+      currentLotData.dummy_status.good_passed && currentLotData.dummy_status.ng_passed
     );
-    if (hasPassedDummy) {
-      if (currentLotData) {
-        currentLotData.dummy_tested = true;
-        currentLotData.dummy_status = { good_passed: true, ng_passed: true };
-      }
-      updateStage2DummyStatus({ good_passed: true, ng_passed: true }, true);
-    } else {
-      updateStage2DummyStatus(currentLotData?.dummy_status, currentLotData?.dummy_tested);
-    }
+    currentLotData.dummy_tested = hasPassedDummy;
+    updateStage2DummyStatus(currentLotData.dummy_status, hasPassedDummy);
     setTimeout(() => {
       const scan2 = document.getElementById("stage2ScanBoxInput");
       const closeBtn = document.getElementById("stage2BtnCloseLot");
@@ -2387,13 +2382,14 @@ function handleStage2Scan(e) {
     return;
   }
 
-  // Poka-Yoke Lock: Check if Dummy Test is completed
+  // Poka-Yoke Lock: Strictly enforce Dummy Test (both NG & Good must pass)!
   const hasPassedDummy = Boolean(
-    currentLotData?.dummy_tested ||
-    (currentLotData?.dummy_status?.good_passed && currentLotData?.dummy_status?.ng_passed)
+    currentLotData?.dummy_tested &&
+    currentLotData?.dummy_status?.good_passed &&
+    currentLotData?.dummy_status?.ng_passed
   );
   if (!hasPassedDummy) {
-    alert("⛔ Poka-Yoke Lock: บังคับทดสอบชิ้นงานตัวอย่าง (Dummy Test) ให้ผ่านครบก่อน!\n\n1️⃣ กดปุ่ม [ เทสตัวอย่าง NG ] ด้านบนก่อน\n2️⃣ แล้วกดปุ่ม [ เทสตัวอย่าง Good ]\n\nเมื่อทดสอบผ่านครบทั้ง 2 ชิ้นงานแล้ว ระบบจะปลดล็อกให้สแกนกล่องงานจริงได้ทันที");
+    alert("⛔ Poka-Yoke Lock: บังคับทดสอบชิ้นงานตัวอย่าง (Dummy Test) ให้ผ่านครบทั้ง 2 ตัวอย่างก่อนเริ่มงาน!\n\n1️⃣ กดปุ่ม [ เทสตัวอย่าง NG ] ด้านบนก่อน\n2️⃣ แล้วกดปุ่ม [ เทสตัวอย่าง Good ]\n\nเมื่อทดสอบผ่านครบทั้ง 2 ชิ้นงานแล้ว ระบบจึงจะปลดล็อกให้สแกนกล่องงานจริงได้!");
     return;
   }
 
@@ -2646,9 +2642,11 @@ function openResumedLotScreen(lot, opId, opName) {
   const regLotNo = document.getElementById("regLotNoDisplay");
   const regOpName = document.getElementById("regOperatorNameDisplay");
   const regOpId = document.getElementById("regOperatorIdDisplay");
+  const localOpId = sessionStorage.getItem("cira_operator_id") || opId || lot.operator_id || "MTL80343";
+  const localOpName = sessionStorage.getItem("cira_operator_name") || opName || lot.operator_name || "Sitthichok Suriyawong";
   if (regLotNo) regLotNo.textContent = lot.lot_number || "-";
-  if (regOpName) regOpName.textContent = opName || lot.operator_name || "Sitthichok Suriyawong";
-  if (regOpId) regOpId.textContent = opId || lot.operator_id || "MTL80343";
+  if (regOpName) regOpName.textContent = localOpName;
+  if (regOpId) regOpId.textContent = localOpId;
 
   const regTotalWork = document.getElementById("regTotalWorkQty");
   const regQtyBox = document.getElementById("regQtyPerBox");

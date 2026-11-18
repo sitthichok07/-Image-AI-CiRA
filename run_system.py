@@ -79,13 +79,15 @@ async def serve_dashboard():
     return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
 
 def gen_video_frames():
-    """MJPEG Video streaming generator."""
+    """MJPEG Video streaming generator with bandwidth throttling for cloud."""
+    # When in simulation or cloud environment, stream at ~6 FPS to save bandwidth & prevent lag
+    fps_delay = 0.16 if getattr(config, "SIMULATION_MODE", True) else 0.08
     while True:
         jpeg_bytes = camera_service.get_latest_jpeg()
         if jpeg_bytes:
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + jpeg_bytes + b'\r\n')
-        time.sleep(0.04)  # ~25 FPS
+        time.sleep(fps_delay)
 
 @app.get("/video_feed")
 async def video_feed():
@@ -175,7 +177,10 @@ async def api_inspection_scan(data: Dict[str, Any] = Body(...)):
     barcode = data.get("barcode", "").strip()
     if not barcode:
         return JSONResponse(status_code=400, content={"error": "Empty barcode"})
-    res = await controller.process_box_barcode(barcode)
+    operator_id = data.get("operator_id")
+    operator_name = data.get("operator_name")
+    table_no = data.get("table_no")
+    res = await controller.process_box_barcode(barcode, operator_id=operator_id, operator_name=operator_name, table_no=table_no)
     if isinstance(res, dict) and "error" in res:
         return JSONResponse(status_code=400, content=res)
     return res

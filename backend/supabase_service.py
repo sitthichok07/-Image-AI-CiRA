@@ -189,8 +189,20 @@ class SupabaseService:
         if not self.is_enabled:
             return None
 
-        # Upload image if provided as bytes
+        # Upload image if provided as bytes (or fallback to local image)
         uploaded_url = image_url
+        if not image_bytes and not uploaded_url:
+            for p in [
+                config.INSPECTIONS_DIR / f"{lot_number}_{box_barcode}.jpg",
+                config.SAMPLE_IMAGES_DIR / ("sample_good.jpg" if final_result.upper() == "G" else "sample_ng.jpg")
+            ]:
+                if p.exists():
+                    try:
+                        image_bytes = p.read_bytes()
+                        break
+                    except Exception:
+                        pass
+
         if image_bytes and not uploaded_url:
             filename = f"insp_{lot_number}_{box_barcode}.jpg"
             uploaded_url = await self.upload_evidence_image(image_bytes, filename)
@@ -402,6 +414,19 @@ class SupabaseService:
 
         # Sync inspections
         for insp in inspections:
+            img_p = insp.get("image_path") or ""
+            img_bytes = None
+            img_url = None
+            if img_p.startswith("http"):
+                img_url = img_p
+            elif img_p:
+                local_file = config.BASE_DIR / img_p.lstrip("/")
+                if local_file.exists():
+                    try:
+                        img_bytes = local_file.read_bytes()
+                    except Exception:
+                        pass
+
             res = await self.sync_box_inspection(
                 lot_number=insp.get("lot_number"),
                 box_barcode=insp.get("box_barcode"),
@@ -411,7 +436,9 @@ class SupabaseService:
                 final_result=insp.get("final_result", "G"),
                 confidence_score=insp.get("confidence_score", 0.0),
                 cycle_time_ms=insp.get("cycle_time_ms", 2350),
-                defect_type=insp.get("defect_type", "NONE")
+                defect_type=insp.get("defect_type", "NONE"),
+                image_bytes=img_bytes,
+                image_url=img_url
             )
             if res:
                 synced_inspections += 1
